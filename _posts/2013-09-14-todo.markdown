@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Things to do this week !"
+date:   2013-09-14 04:15:52
+categories: todo
+---
+
+- [x] github pages with jekyll
+- [&nbsp;] `clojure async`
+- [&nbsp;] new `scala async` ( 2.11 )
