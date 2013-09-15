@@ -11,7 +11,7 @@
 
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
-
+        <link rel="alternate" type="application/rss+xml" title="{{ site.name }}" href="{{ site.url }}/feed.xml">
     </head>
     <body>
 
@@ -20,6 +20,11 @@
             <div class="header">
               <h1 class="title"><a href="/">{{ site.name }}</a></h1>
               <a class="extra" href="/">home</a>
+                
+                <div class="links">
+                 <a href="/feed.xml">
+                     <img src="/assets/rss.png" /></a>
+                </div>
             </div>
 
                 {{ content }}
@@ -27,15 +32,9 @@
             <div class="footer">
               <div class="contact">
                 <p>
-                  <br />
-                  <br />
-                  jgoday@gmail.com
-                </p>
-              </div>
-              <div class="contact">
-                <p>
                   <a href="http://github.com/jgoday/">github.com/jgoday</a><br />
                   <a href="http://twitter.com/jgoday/">twitter.com/jgoday</a><br />
+                  jgoday@gmail.com
                 </p>
               </div>
             </div>

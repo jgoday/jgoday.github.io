@@ -13,7 +13,7 @@
 html, body { height: 100%; }
 
 body {
-  background-color: #FFF;
+  background-color: #fff;
   font: 13.34px Helvetica, Arial, sans-serif;
   font-size: small;
   text-align: center;
@@ -82,7 +82,7 @@ ul.posts span {
 }
 
 .site .header a.extra {
-  color: #aaa;
+  color: #444;
   margin-left: 1em;
 }
 
@@ -157,4 +157,24 @@ ul.posts span {
 
 .post pre.terminal code {
   background-color: #333;
+}
+
+.header {
+    background-color: rgba(255, 205, 110, 0.48);
+    padding: 9px;
+    border-bottom: 1px solid rgba(235, 154, 25, 0.85);
+}
+
+.post-title {
+    background-color: rgba(255, 199, 94, 0.9);
+    padding: 9px;
+}
+
+.header .links {
+    margin-top: 10px;
+    float: right;
+}
+
+.header .links img {
+    width: 20px;   
 }
