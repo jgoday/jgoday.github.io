@@ -1,4 +1,4 @@
 name: jgoday.github.io
 markdown: redcarpet
-highlighter: pygments
+highlighter: rouge
 future: true
