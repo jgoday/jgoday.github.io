@@ -7,6 +7,298 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Xamarin Forms with F#: Part 1</title>
+				<description>&lt;p&gt;I&amp;#39;m very interested in the multiplatform possibilities that comes with Xamarin.Forms (v &amp;gt;= 3), specially the android, WPF and &lt;a href=&quot;https://docs.microsoft.com/en-us/xamarin/xamarin-forms/platform/gtk?tabs=vswin&quot;&gt;GTK&lt;/a&gt; backends.&lt;/p&gt;
+
+&lt;p&gt;I really like &lt;a href=&quot;https://fsharp.org/&quot;&gt;F#&lt;/a&gt;. His clean, concise and functional approach, make it a nice csharp alternative in dotnet.&lt;/p&gt;
+
+&lt;p&gt;The first problem that I found, was the lack of tooling support for &lt;em&gt;Xamarin.Forms&lt;/em&gt; and &lt;em&gt;F#&lt;/em&gt;, both in Linux and Windows.&lt;/p&gt;
+
+&lt;p&gt;In Windows, the Xamarin tooling is ok, with a downside. There is no template for creating a solution with &lt;em&gt;Xamarin.Forms&lt;/em&gt; in F#.&lt;/p&gt;
+
+&lt;p&gt;In Linux, there is no Xamarin tooling support at all. So you have to manually create the solution, and build it with &lt;strong&gt;msbuild&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;I will focus here in creating a solution with &lt;em&gt;F#&lt;/em&gt; and a &lt;em&gt;GTK Backend&lt;/em&gt; in Linux.&lt;/p&gt;
+
+&lt;p&gt;Here are the tools, versions and steps:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;dotnet&lt;/strong&gt; (2.1.300-preview1-008174)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;mono&lt;/strong&gt; (5.12)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;gtk-sharp&lt;/strong&gt; 2.12&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;clearfix&quot;&gt;&lt;/div&gt;
+
+&lt;h3&gt;Solution&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create the solution&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;cd /tmp
+mkdir HelloWorld
+cd HelloWorld
+dotnet new sln
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create the common netstandard Xamarin.Forms project&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;dotnet new classlib -lang f# -o HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add the Xamarin.Forms project to the solution&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span&gt;&lt;/span&gt;dotnet sln add HelloWorld
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create the GTK application&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;dotnet new console -lang f# -o HelloWorld.GTK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add the GTK application to the solution&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span&gt;&lt;/span&gt;dotnet sln add HelloWorld.GTK
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;Configure the xamarin.forms common project&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add Xamarin.Forms dependency&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; HelloWorld
+dotnet add package Xamarin.Forms
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create App xaml&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot; ?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;Application&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://xamarin.com/schemas/2014/forms&amp;quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;xmlns:x=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.microsoft.com/winfx/2009/xaml&amp;quot;&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;x:Class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;HelloWorld.App&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;Application.Resources&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Application.Resources&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Application&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create App.fs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-fsharp&quot; data-lang=&quot;fsharp&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Innt&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms.Xaml&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;App&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;inherit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Application&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MainPage&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MainView&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LoadFromXaml&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;typeof&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;App&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ignore&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create the MainPage.xaml&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot; ?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;ContentPage&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://xamarin.com/schemas/2014/forms&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;xmlns:x=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.microsoft.com/winfx/2009/xaml&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;x:Class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;HelloWorld.MainPage&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;ContentPage.Content&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;StackLayout&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Orientation=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Vertical&amp;quot;&lt;/span&gt;
+                 &lt;span class=&quot;na&quot;&gt;VerticalOptions=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Center&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;BoxView&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Color=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Blue&amp;quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;WidthRequest=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;160&amp;quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;HeightRequest=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;160&amp;quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;VerticalOptions=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Center&amp;quot;&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;HorizontalOptions=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Center&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/StackLayout&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ContentPage.Content&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ContentPage&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Create the MainPage.fs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-fsharp&quot; data-lang=&quot;fsharp&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;namespace&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Innt&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms.Xaml&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MainPage&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;inherit&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ContentPage&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LoadFromXaml&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;typeof&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MainPage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ignore&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Configure the project&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;Project&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Sdk=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Microsoft.NET.Sdk&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;PropertyGroup&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;TargetFramework&amp;gt;&lt;/span&gt;netstandard2.0&lt;span class=&quot;nt&quot;&gt;&amp;lt;/TargetFramework&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/PropertyGroup&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;ItemGroup&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Compile&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;MainView.fs&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Compile&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;App.fs&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ItemGroup&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;ItemGroup&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;PackageReference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;3.0.0.482510&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ItemGroup&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Project&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Build it (you can use dotnet cli or msbuild since it&amp;#39;s a netstandard project)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;# with dotnet cli
+dotnet build
+# with msbuild
+msbuild /t:Build
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;code-comment&quot;&gt;
+you can use dotnet cli or msbuild since it&#39;s a netstandard project
+&lt;/div&gt;
+
+&lt;h3&gt;Create the Gtk application&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Change the project definition&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;Project&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;DefaultTargets=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Build&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;ToolsVersion=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;4.0&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;xmlns=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;http://schemas.microsoft.com/developer/msbuild/2003&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;PropertyGroup&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;Configuration&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Condition=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot; &amp;#39;$(Configuration)&amp;#39; == &amp;#39;&amp;#39; &amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;Debug&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Configuration&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;Platform&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Condition=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot; &amp;#39;$(Platform)&amp;#39; == &amp;#39;x86&amp;#39; &amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/Platform&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;OutputType&amp;gt;&lt;/span&gt;Exe&lt;span class=&quot;nt&quot;&gt;&amp;lt;/OutputType&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;RootNamespace&amp;gt;&lt;/span&gt;Innt&lt;span class=&quot;nt&quot;&gt;&amp;lt;/RootNamespace&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;AssemblyName&amp;gt;&lt;/span&gt;Innt.Gtk&lt;span class=&quot;nt&quot;&gt;&amp;lt;/AssemblyName&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;TargetFrameworkVersion&amp;gt;&lt;/span&gt;v4.7&lt;span class=&quot;nt&quot;&gt;&amp;lt;/TargetFrameworkVersion&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;AutoGenerateBindingRedirects&amp;gt;&lt;/span&gt;true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/AutoGenerateBindingRedirects&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;ProjectGuid&amp;gt;&lt;/span&gt;{0076E36A-1998-48A5-9F45-2BDE5920204F}&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ProjectGuid&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/PropertyGroup&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;PropertyGroup&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Condition=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot; &amp;#39;$(Configuration)|$(Platform)&amp;#39; == &amp;#39;Debug|x86&amp;#39; &amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;DebugSymbols&amp;gt;&lt;/span&gt;true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/DebugSymbols&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;DebugType&amp;gt;&lt;/span&gt;full&lt;span class=&quot;nt&quot;&gt;&amp;lt;/DebugType&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Optimize&amp;gt;&lt;/span&gt;false&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Optimize&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;OutputPath&amp;gt;&lt;/span&gt;bin\Debug&lt;span class=&quot;nt&quot;&gt;&amp;lt;/OutputPath&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;DefineConstants&amp;gt;&lt;/span&gt;DEBUG;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/DefineConstants&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;ErrorReport&amp;gt;&lt;/span&gt;prompt&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ErrorReport&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;WarningLevel&amp;gt;&lt;/span&gt;4&lt;span class=&quot;nt&quot;&gt;&amp;lt;/WarningLevel&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;PlatformTarget&amp;gt;&lt;/span&gt;x86&lt;span class=&quot;nt&quot;&gt;&amp;lt;/PlatformTarget&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/PropertyGroup&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;ItemGroup&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Compile&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Program.fs&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ItemGroup&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;PropertyGroup&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;FSharpTargetsPath&amp;gt;&lt;/span&gt;$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets&lt;span class=&quot;nt&quot;&gt;&amp;lt;/FSharpTargetsPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/PropertyGroup&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Import&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Project=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;$(FSharpTargetsPath)&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Project&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;code-comment&quot;&gt;
+  The GTK application must be compiled and executed with &lt;strong&gt;mono&lt;/strong&gt;, so we have to change the project definition. You can create a &lt;strong&gt;fsharp&lt;/strong&gt; project with &lt;strong&gt;monodevelop&lt;/strong&gt; or paste/change the following xml.
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add nuget dependencies and restore them&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;packages&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;package&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;3.0.0.482510&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;targetFramework=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;net461&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;package&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Platform.GTK&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;3.0.0.482510&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;targetFramework=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;net461&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/packages&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;code-comment&quot;&gt;
+Create the nuget &lt;strong&gt;packages.config&lt;/strong&gt; (in HelloWorld.GTK directory)
+&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;cd HelloWorld.GTK
+nuget restore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;code-comment&quot;&gt;
+Restore the nuget packages
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add a reference to the Xamarin.Forms common project&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;ItemGroup&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;ProjectReference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;..\HelloWorld\HelloWorld.fsproj&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;HelloWorld&lt;span class=&quot;nt&quot;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ProjectReference&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ItemGroup&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;code-comment&quot;&gt;
+Paste the following &lt;i&gt;ItemGroup&lt;/i&gt; to &lt;strong&gt;HelloWorld.GTK.fsproj&lt;/strong&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Add the dependencies to the project definition (HelloWorld.GTK.fsproj)&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;ItemGroup&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;mscorlib&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;System&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;/usr/lib/mono/4.5/FSharp.Core.dll&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&amp;quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SpecificVersion&amp;gt;&lt;/span&gt;False&lt;span class=&quot;nt&quot;&gt;&amp;lt;/SpecificVersion&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SpecificVersion&amp;gt;&lt;/span&gt;False&lt;span class=&quot;nt&quot;&gt;&amp;lt;/SpecificVersion&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;SpecificVersion&amp;gt;&lt;/span&gt;False&lt;span class=&quot;nt&quot;&gt;&amp;lt;/SpecificVersion&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Core.Design&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Design\Xamarin.Forms.Core.Design.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Xaml.Design&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Design\Xamarin.Forms.Xaml.Design.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Core&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Core.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Platform&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Platform.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Xaml&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Xaml.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;Reference&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;Include=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Xamarin.Forms.Platform.GTK&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;HintPath&amp;gt;&lt;/span&gt;.\packages\Xamarin.Forms.Platform.GTK.3.0.0.482510\lib\net45\Xamarin.Forms.Platform.GTK.dll&lt;span class=&quot;nt&quot;&gt;&amp;lt;/HintPath&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/Reference&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ItemGroup&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Program.fs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-fsharp&quot; data-lang=&quot;fsharp&quot;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;System&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Xamarin.Forms.Platform.GTK&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;[&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EntryPoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;[&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;STAThread&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;]&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+    &lt;span class=&quot;nn&quot;&gt;Gtk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Application&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Init&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;nn&quot;&gt;Forms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Init&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Innt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;App&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;window&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FormsWindow&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LoadApplication&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SetApplicationTitle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Sample&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Show&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;nn&quot;&gt;Gtk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nn&quot;&gt;Application&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Run&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Build it and test it&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;&lt;span&gt;&lt;/span&gt;msbuild /t:Build /p:Platform=&amp;quot;x86&amp;quot;
+mono bin/Debug/HelloWorld.Gtk.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+				<pubDate>Tue, 22 May 2018 00:15:52 +0200</pubDate>
+				<link>/xamarin.forms/f%23/2018/05/22/xamarin_forms.html</link>
+				<guid isPermaLink="true">/xamarin.forms/f%23/2018/05/22/xamarin_forms.html</guid>
+			</item>
+		
+			<item>
 				<title>Clojure core async</title>
 				<description>&lt;p&gt;&lt;strong&gt;Clojure.core.async&lt;/strong&gt; library introduces &lt;em&gt;&amp;#39;go like&amp;#39;&lt;/em&gt; channels.&lt;/p&gt;
 
@@ -17,29 +309,25 @@ using goroutines to sum a list of integers in paralell ( 10 lightweight threads 
 &lt;li&gt;create a channel&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;let &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-clojure&quot; data-lang=&quot;clojure&quot;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;let &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;chan&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ul&gt;
 &lt;li&gt;create a goroutine&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-clojure&quot; data-lang=&quot;clojure&quot;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ul&gt;
 &lt;li&gt;push a value to the channel, inside a goroutine&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;gt;!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;do-sum&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-clojure&quot; data-lang=&quot;clojure&quot;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;go&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;gt;!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;do-sum&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ul&gt;
 &lt;li&gt;receive all values from the channel&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;lt;!!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-clojure&quot; data-lang=&quot;clojure&quot;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;lt;!!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;code&gt;&amp;lt;!!&lt;/code&gt; is used to pull the values from the channel, like &lt;code&gt;&amp;lt;!&lt;/code&gt;,
@@ -47,7 +335,7 @@ but in the main thread&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Here is the complete code :&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;clojure&quot;&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;ns &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;sample-async.core&lt;/span&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-clojure&quot; data-lang=&quot;clojure&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;ns &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;sample-async.core&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:require&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;clojure.core.async&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:refer&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:all&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:gen-class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
@@ -65,8 +353,7 @@ but in the main thread&lt;/p&gt;&lt;/li&gt;
 
     &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;prn&lt;/span&gt;
      &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Total sum = &amp;quot;&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;do-sum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;lt;!!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))))))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+        &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;do-sum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;&amp;lt;!!&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)))))))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;hr&gt;
 
@@ -84,19 +371,6 @@ and with the possibility of eval any function in the moment !&lt;/p&gt;&lt;/li&g
 				<pubDate>Sun, 15 Sep 2013 06:15:52 +0200</pubDate>
 				<link>/clojure/2013/09/15/clojure_async.html</link>
 				<guid isPermaLink="true">/clojure/2013/09/15/clojure_async.html</guid>
-			</item>
-		
-			<item>
-				<title>Things to do this week !</title>
-				<description>&lt;ul&gt;
-&lt;li&gt;[x] github pages with jekyll&lt;/li&gt;
-&lt;li&gt;[&amp;nbsp;] &lt;code&gt;clojure async&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;[&amp;nbsp;] new &lt;code&gt;scala async&lt;/code&gt; ( 2.11 )&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-				<pubDate>Sat, 14 Sep 2013 06:15:52 +0200</pubDate>
-				<link>/todo/2013/09/14/todo.html</link>
-				<guid isPermaLink="true">/todo/2013/09/14/todo.html</guid>
 			</item>
 		
 	</channel>

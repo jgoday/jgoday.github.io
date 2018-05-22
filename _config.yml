@@ -1,3 +1,5 @@
 name: jgoday.github.io
 markdown: redcarpet
-pygments: true
+highlighter: pygments
+future: true
+gems: ['jekyll-less']

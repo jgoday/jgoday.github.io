@@ -12,6 +12,7 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="/css/main.css">
         <link rel="alternate" type="application/rss+xml" title="jgoday.github.io" href="/feed.xml">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
     </head>
     <body>
 
@@ -19,16 +20,26 @@
           <div class="site">
             <div class="header">
               <h1 class="title"><a href="/">jgoday.github.io</a></h1>
-              <a class="extra" href="/">home</a>
-                
-                <div class="links">
-                 <a href="/feed.xml">
-                     <img src="/assets/rss.png" /></a>
-                </div>
+              <div class="links">
+                  <a href="/feed.xml">
+                     <img src="/assets/rss.png" />
+                  </a>
+              </div>
             </div>
 
                 <h2 class="post-title">Clojure core async</h2>
+
+<div class="content">
+<div class="post-categories">
+    
+    
+    <a href="/categories/#clojure">clojure</a>
+    
+    
+  </div>
+
 <p class="meta">15 Sep 2013</p>
+
 
 <div class="post">
 <p><strong>Clojure.core.async</strong> library introduces <em>&#39;go like&#39;</em> channels.</p>
@@ -40,29 +51,25 @@ using goroutines to sum a list of integers in paralell ( 10 lightweight threads 
 <li>create a channel</li>
 </ul>
 
-<div class="highlight"><pre><code class="clojure">  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">c</span> <span class="p">(</span><span class="nf">chan</span><span class="p">)])</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">c</span> <span class="p">(</span><span class="nf">chan</span><span class="p">)])</span></code></pre></figure>
 
 <ul>
 <li>create a goroutine</li>
 </ul>
 
-<div class="highlight"><pre><code class="clojure">  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span> <span class="nv">...</span> <span class="p">))</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span> <span class="nv">...</span> <span class="p">))</span></code></pre></figure>
 
 <ul>
 <li>push a value to the channel, inside a goroutine</li>
 </ul>
 
-<div class="highlight"><pre><code class="clojure">  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span><span class="nf">&gt;!</span> <span class="nv">c</span> <span class="p">(</span><span class="nf">do-sum</span> <span class="nv">part</span><span class="p">)))</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span><span class="nf">&gt;!</span> <span class="nv">c</span> <span class="p">(</span><span class="nf">do-sum</span> <span class="nv">part</span><span class="p">)))</span></code></pre></figure>
 
 <ul>
 <li>receive all values from the channel</li>
 </ul>
 
-<div class="highlight"><pre><code class="clojure">  <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">))</span>
-</code></pre></div>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">))</span></code></pre></figure>
 
 <ul>
 <li><p><code>&lt;!!</code> is used to pull the values from the channel, like <code>&lt;!</code>,
@@ -70,7 +77,7 @@ but in the main thread</p></li>
 <li><p>Here is the complete code :</p></li>
 </ul>
 
-<div class="highlight"><pre><code class="clojure"><span class="p">(</span><span class="kd">ns </span><span class="nv">sample-async.core</span>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span><span class="p">(</span><span class="kd">ns </span><span class="nv">sample-async.core</span>
   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clojure.core.async</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
   <span class="p">(</span><span class="ss">:gen-class</span><span class="p">))</span>
 
@@ -88,8 +95,7 @@ but in the main thread</p></li>
 
     <span class="p">(</span><span class="nf">prn</span>
      <span class="p">(</span><span class="nb">str </span><span class="s">&quot;Total sum = &quot;</span>
-        <span class="p">(</span><span class="nf">do-sum</span> <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">)))))))</span>
-</code></pre></div>
+        <span class="p">(</span><span class="nf">do-sum</span> <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">)))))))</span></code></pre></figure>
 
 <hr>
 
@@ -107,17 +113,54 @@ and with the possibility of eval any function in the moment !</p></li>
 </div>
 
 
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://jgoday-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
             <div class="footer">
+              <div class="brands pull-right md padding">
+                <a href="https://www.linkedin.com/in/javier-goday-3a1b417b/"><img src="/assets/In-Black-48px-TM.png" /></a>
+                <a href="https://github.com/jgoday"><img src="/assets/GitHub-Mark-64px.png" /></a>
+              </div>
+
               <div class="contact">
                 <p>
-                  <a href="http://github.com/jgoday/">github.com/jgoday</a><br />
-                  <a href="http://twitter.com/jgoday/">twitter.com/jgoday</a><br />
-                  jgoday@gmail.com
+                  <a href="https://github.com/jgoday">github.com/jgoday</a><br />
+                  jgoday at gmail dot com
                 </p>
               </div>
             </div>
           </div>
         </div> <!-- /container -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119691458-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-119691458-1');
+</script>
 
     </body>
 </html>
