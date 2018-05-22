@@ -84,7 +84,7 @@ ul.posts .post-item a {
 
 }
 div.brands {
-    padding-right: 17vw;
+    padding-right: 17vw !important;
 }
 .brands img {
     height: 28px;
