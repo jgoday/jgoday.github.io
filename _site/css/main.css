@@ -81,6 +81,10 @@ ul.posts .post-item a {
 }
 .pull-right {
     float: right;
+
+}
+div.brands {
+    padding-right: 17vw;
 }
 .brands img {
     height: 28px;
@@ -227,6 +231,7 @@ background-color: #333;
 .header .links {
     margin-top: 10px;
     float: right;
+    padding-right: 16vw;
 }
 
 .header .links img {
