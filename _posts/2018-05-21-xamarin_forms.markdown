@@ -86,7 +86,7 @@ open Xamarin.Forms
 open Xamarin.Forms.Xaml
 
 type App() =
-    inherit Application(MainPage = MainView())
+    inherit Application(MainPage = MainPage())
 
     do base.LoadFromXaml(typeof<App>) |> ignore
 ```
