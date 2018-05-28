@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Xamarin Forms with F#: Part 1"
+title:  "Xamarin Forms with F#: Part 1 (GTK)"
 date:   2018-05-21 22:15:52
 categories: [xamarin.forms, f#]
 ---

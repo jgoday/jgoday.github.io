@@ -42,73 +42,84 @@
 
 
 <div class="post">
-<p><strong>Clojure.core.async</strong> library introduces <em>&#39;go like&#39;</em> channels.</p>
+<p><strong>Clojure.core.async</strong> library introduces <em>‘go like’</em> channels.</p>
 
 <p>This is a classic sample,
 using goroutines to sum a list of integers in paralell ( 10 lightweight threads ), and then suming all the results.</p>
 
 <ul>
-<li>create a channel</li>
+  <li>create a channel</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">c</span> <span class="p">(</span><span class="nf">chan</span><span class="p">)])</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span class="w">  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">chan</span><span class="p">)])</span></code></pre></figure>
 
 <ul>
-<li>create a goroutine</li>
+  <li>create a goroutine</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span> <span class="nv">...</span> <span class="p">))</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span class="w">  </span><span class="p">(</span><span class="nf">go</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nf">...</span><span class="w"> </span><span class="p">))</span></code></pre></figure>
 
 <ul>
-<li>push a value to the channel, inside a goroutine</li>
+  <li>push a value to the channel, inside a goroutine</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nf">go</span> <span class="p">(</span><span class="nf">&gt;!</span> <span class="nv">c</span> <span class="p">(</span><span class="nf">do-sum</span> <span class="nv">part</span><span class="p">)))</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span class="w">  </span><span class="p">(</span><span class="nf">go</span><span class="w"> </span><span class="p">(</span><span class="nf">&gt;!</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">do-sum</span><span class="w"> </span><span class="n">part</span><span class="p">)))</span></code></pre></figure>
 
 <ul>
-<li>receive all values from the channel</li>
+  <li>receive all values from the channel</li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span>  <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">))</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span class="w">  </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">10</span><span class="p">)]</span><span class="w"> </span><span class="p">(</span><span class="nf">&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">))</span></code></pre></figure>
 
 <ul>
-<li><p><code>&lt;!!</code> is used to pull the values from the channel, like <code>&lt;!</code>,
-but in the main thread</p></li>
-<li><p>Here is the complete code :</p></li>
+  <li>
+    <p><code class="highlighter-rouge">&lt;!!</code> is used to pull the values from the channel, like <code class="highlighter-rouge">&lt;!</code>,
+but in the main thread</p>
+  </li>
+  <li>
+    <p>Here is the complete code :</p>
+  </li>
 </ul>
 
-<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span></span><span class="p">(</span><span class="kd">ns </span><span class="nv">sample-async.core</span>
-  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clojure.core.async</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-  <span class="p">(</span><span class="ss">:gen-class</span><span class="p">))</span>
+<figure class="highlight"><pre><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="nf">ns</span><span class="w"> </span><span class="n">sample-async.core</span><span class="w">
+  </span><span class="p">(</span><span class="no">:require</span><span class="w"> </span><span class="p">[</span><span class="n">clojure.core.async</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="no">:all</span><span class="p">])</span><span class="w">
+  </span><span class="p">(</span><span class="no">:gen-class</span><span class="p">))</span><span class="w">
 
-<span class="p">(</span><span class="k">def </span><span class="nv">numbers</span> <span class="p">(</span><span class="nb">range </span><span class="mi">100</span><span class="p">))</span>
+</span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">numbers</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">100</span><span class="p">))</span><span class="w">
 
-<span class="p">(</span><span class="kd">defn- </span><span class="nv">do-sum</span> <span class="p">[</span><span class="nv">numbers</span><span class="p">]</span>
-    <span class="p">(</span><span class="nb">reduce + </span><span class="nv">numbers</span><span class="p">))</span>
+</span><span class="p">(</span><span class="k">defn-</span><span class="w"> </span><span class="n">do-sum</span><span class="w"> </span><span class="p">[</span><span class="n">numbers</span><span class="p">]</span><span class="w">
+    </span><span class="p">(</span><span class="nb">reduce</span><span class="w"> </span><span class="nb">+</span><span class="w"> </span><span class="n">numbers</span><span class="p">))</span><span class="w">
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span> <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">parts</span> <span class="p">(</span><span class="nf">partition</span> <span class="mi">10</span> <span class="nv">numbers</span><span class="p">)</span>
-        <span class="nv">c</span> <span class="p">(</span><span class="nf">chan</span><span class="p">)]</span>
-    <span class="p">(</span><span class="nb">doseq </span><span class="p">[</span><span class="nv">part</span> <span class="nv">parts</span><span class="p">]</span>
-      <span class="p">(</span><span class="nf">go</span>
-       <span class="p">(</span><span class="nf">&gt;!</span> <span class="nv">c</span> <span class="p">(</span><span class="nf">do-sum</span> <span class="nv">part</span><span class="p">))))</span>
+</span><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">-main</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="w"> </span><span class="n">args</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">parts</span><span class="w"> </span><span class="p">(</span><span class="nf">partition</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">numbers</span><span class="p">)</span><span class="w">
+        </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">chan</span><span class="p">)]</span><span class="w">
+    </span><span class="p">(</span><span class="nb">doseq</span><span class="w"> </span><span class="p">[</span><span class="n">part</span><span class="w"> </span><span class="n">parts</span><span class="p">]</span><span class="w">
+      </span><span class="p">(</span><span class="nf">go</span><span class="w">
+       </span><span class="p">(</span><span class="nf">&gt;!</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="p">(</span><span class="nf">do-sum</span><span class="w"> </span><span class="n">part</span><span class="p">))))</span><span class="w">
 
-    <span class="p">(</span><span class="nf">prn</span>
-     <span class="p">(</span><span class="nb">str </span><span class="s">&quot;Total sum = &quot;</span>
-        <span class="p">(</span><span class="nf">do-sum</span> <span class="p">(</span><span class="nb">for </span><span class="p">[</span><span class="nv">_</span> <span class="p">(</span><span class="nb">range </span><span class="mi">10</span><span class="p">)]</span> <span class="p">(</span><span class="nf">&lt;!!</span> <span class="nv">c</span><span class="p">)))))))</span></code></pre></figure>
+    </span><span class="p">(</span><span class="nb">prn</span><span class="w">
+     </span><span class="p">(</span><span class="nb">str</span><span class="w"> </span><span class="s">"Total sum = "</span><span class="w">
+        </span><span class="p">(</span><span class="nf">do-sum</span><span class="w"> </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="p">[</span><span class="n">_</span><span class="w"> </span><span class="p">(</span><span class="nb">range</span><span class="w"> </span><span class="mi">10</span><span class="p">)]</span><span class="w"> </span><span class="p">(</span><span class="nf">&lt;!!</span><span class="w"> </span><span class="n">c</span><span class="p">)))))))</span></code></pre></figure>
 
-<hr>
+<hr />
 
-<h4>Some interesting links</h4>
+<h4 id="some-interesting-links">Some interesting links</h4>
 
 <ul>
-<li><p><a href="http://clojure.github.io/core.async/" title="Clojure async documentation">Clojure async documentation</a></p></li>
-<li><p><a href="http://blog.drewolson.org/blog/2013/07/04/clojure-core-dot-async-and-go-a-code-comparison/" title="Sample blog post, from drew olson"><strong>blog.drewolson.org</strong>, clojure async blog post </a></p></li>
-<li><p><a href="http://www.lighttable.com" title="LightTable">LightTable</a>, really impressive, with an inline instant repl, console, 
-and with the possibility of eval any function in the moment !</p></li>
+  <li>
+    <p><a href="http://clojure.github.io/core.async/" title="Clojure async documentation">Clojure async documentation</a></p>
+  </li>
+  <li>
+    <p><a href="http://blog.drewolson.org/blog/2013/07/04/clojure-core-dot-async-and-go-a-code-comparison/" title="Sample blog post, from drew olson"><strong>blog.drewolson.org</strong>, clojure async blog post </a></p>
+  </li>
+  <li>
+    <p><a href="http://www.lighttable.com" title="LightTable">LightTable</a>, really impressive, with an inline instant repl, console, 
+and with the possibility of eval any function in the moment !</p>
+  </li>
 </ul>
 
-<p><img src="/assets/lighttable.png" alt="LightTable in action"></p>
+<p><img src="/assets/lighttable.png" alt="LightTable in action" /></p>
+
 
 </div>
 

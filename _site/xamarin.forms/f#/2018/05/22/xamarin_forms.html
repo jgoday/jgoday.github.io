@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Xamarin Forms with F#: Part 1</title>
+        <title>Xamarin Forms with F#: Part 1 (GTK)</title>
         <meta name="viewport" content="width=device-width">
 
         <!-- syntax highlighting CSS -->
@@ -27,7 +27,7 @@
               </div>
             </div>
 
-                <h2 class="post-title">Xamarin Forms with F#: Part 1</h2>
+                <h2 class="post-title">Xamarin Forms with F#: Part 1 (GTK)</h2>
 
 <div class="content">
 <div class="post-categories">
@@ -45,7 +45,7 @@
 
 
 <div class="post">
-<p>I&#39;m very interested in the multiplatform possibilities that comes with Xamarin.Forms (v &gt;= 3), specially the android, WPF and <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/platform/gtk?tabs=vswin">GTK</a> backends.</p>
+<p>I’m very interested in the multiplatform possibilities that comes with Xamarin.Forms (v &gt;= 3), specially the android, WPF and <a href="https://docs.microsoft.com/en-us/xamarin/xamarin-forms/platform/gtk?tabs=vswin">GTK</a> backends.</p>
 
 <p>I really like <a href="https://fsharp.org/">F#</a>. His clean, concise and functional approach, make it a nice csharp alternative in dotnet.</p>
 
@@ -60,147 +60,165 @@
 <p>Here are the tools, versions and steps:</p>
 
 <ul>
-<li><strong>dotnet</strong> (2.1.300-preview1-008174)</li>
-<li><strong>mono</strong> (5.12)</li>
-<li><strong>gtk-sharp</strong> 2.12</li>
+  <li><strong>dotnet</strong> (2.1.300-preview1-008174)</li>
+  <li><strong>mono</strong> (5.12)</li>
+  <li><strong>gtk-sharp</strong> 2.12</li>
 </ul>
 
 <div class="clearfix"></div>
 
-<h3>Solution</h3>
-
+<h3 id="solution">Solution</h3>
 <ul>
-<li><strong>Create the solution</strong></li>
+  <li><strong>Create the solution</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span>cd /tmp
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd /tmp
 mkdir HelloWorld
 cd HelloWorld
 dotnet new sln
-</code></pre></div>
-<ul>
-<li><strong>Create the common netstandard Xamarin.Forms project</strong></li>
-</ul>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span>dotnet new classlib -lang f# -o HelloWorld
-</code></pre></div>
-<ul>
-<li><strong>Add the Xamarin.Forms project to the solution</strong></li>
-</ul>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>dotnet sln add HelloWorld
-</code></pre></div>
-<ul>
-<li><strong>Create the GTK application</strong></li>
-</ul>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span>dotnet new console -lang f# -o HelloWorld.GTK
-</code></pre></div>
-<ul>
-<li><strong>Add the GTK application to the solution</strong></li>
-</ul>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>dotnet sln add HelloWorld.GTK
-</code></pre></div>
-<h3>Configure the xamarin.forms common project</h3>
+</code></pre></div></div>
 
 <ul>
-<li><strong>Add Xamarin.Forms dependency</strong></li>
+  <li><strong>Create the common netstandard Xamarin.Forms project</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span><span class="nb">cd</span> HelloWorld
-dotnet add package Xamarin.Forms
-</code></pre></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dotnet new classlib -lang f# -o HelloWorld
+</code></pre></div></div>
 <ul>
-<li><strong>Create App xaml</strong></li>
+  <li><strong>Add the Xamarin.Forms project to the solution</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span>
-<span class="nt">&lt;Application</span> <span class="na">xmlns=</span><span class="s">&quot;http://xamarin.com/schemas/2014/forms&quot;</span>
-            <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;</span>
-            <span class="na">x:Class=</span><span class="s">&quot;HelloWorld.App&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dotnet sln add HelloWorld
+</code></pre></div></div>
+<ul>
+  <li><strong>Create the GTK application</strong></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dotnet new console -lang f# -o HelloWorld.GTK
+</code></pre></div></div>
+<ul>
+  <li><strong>Add the GTK application to the solution</strong></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dotnet sln add HelloWorld.GTK
+</code></pre></div></div>
+
+<h3 id="configure-the-xamarinforms-common-project">Configure the xamarin.forms common project</h3>
+
+<ul>
+  <li><strong>Add Xamarin.Forms dependency</strong></li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>HelloWorld
+dotnet add package Xamarin.Forms
+</code></pre></div></div>
+<ul>
+  <li><strong>Create App xaml</strong></li>
+</ul>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="nt">&lt;Application</span> <span class="na">xmlns=</span><span class="s">"http://xamarin.com/schemas/2014/forms"</span>
+            <span class="na">xmlns:x=</span><span class="s">"http://schemas.microsoft.com/winfx/2009/xaml"</span>
+            <span class="na">x:Class=</span><span class="s">"HelloWorld.App"</span><span class="nt">&gt;</span>
 <span class="nt">&lt;Application.Resources&gt;</span>
   <span class="nt">&lt;/Application.Resources&gt;</span>
 <span class="nt">&lt;/Application&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
 <ul>
-<li><strong>Create App.fs</strong></li>
+  <li><strong>Create App.fs</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-fsharp" data-lang="fsharp"><span></span><span class="k">namespace</span> <span class="n">Innt</span>
 
-<span class="k">open</span> <span class="nn">Xamarin.Forms</span>
-<span class="k">open</span> <span class="nn">Xamarin.Forms.Xaml</span>
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nc">Innt</span>
 
-<span class="k">type</span> <span class="nc">App</span><span class="bp">()</span> <span class="o">=</span>
-    <span class="k">inherit</span> <span class="n">Application</span><span class="o">(</span><span class="n">MainPage</span> <span class="o">=</span> <span class="n">MainView</span><span class="bp">()</span><span class="o">)</span>
+<span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nc">Forms</span>
+<span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nc">Xaml</span>
 
-    <span class="k">do</span> <span class="k">base</span><span class="o">.</span><span class="n">LoadFromXaml</span><span class="o">(</span><span class="n">typeof</span><span class="o">&lt;</span><span class="n">App</span><span class="o">&gt;)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</code></pre></div>
+<span class="k">type</span> <span class="nc">App</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">inherit</span> <span class="nc">Application</span><span class="p">(</span><span class="nc">MainPage</span> <span class="p">=</span> <span class="nc">MainPage</span><span class="bp">()</span><span class="p">)</span>
+
+    <span class="k">do</span> <span class="k">base</span><span class="p">.</span><span class="nc">LoadFromXaml</span><span class="p">(</span><span class="n">typeof</span><span class="p">&lt;</span><span class="nc">App</span><span class="o">&gt;)</span> <span class="p">|&gt;</span> <span class="n">ignore</span>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Create the MainPage.xaml</strong></li>
+  <li><strong>Create the MainPage.xaml</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;</span>
-<span class="nt">&lt;ContentPage</span> <span class="na">xmlns=</span><span class="s">&quot;http://xamarin.com/schemas/2014/forms&quot;</span>
-        <span class="na">xmlns:x=</span><span class="s">&quot;http://schemas.microsoft.com/winfx/2009/xaml&quot;</span>
-        <span class="na">x:Class=</span><span class="s">&quot;HelloWorld.MainPage&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="nt">&lt;ContentPage</span> <span class="na">xmlns=</span><span class="s">"http://xamarin.com/schemas/2014/forms"</span>
+        <span class="na">xmlns:x=</span><span class="s">"http://schemas.microsoft.com/winfx/2009/xaml"</span>
+        <span class="na">x:Class=</span><span class="s">"HelloWorld.MainPage"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;ContentPage.Content&gt;</span>
-    <span class="nt">&lt;StackLayout</span> <span class="na">Orientation=</span><span class="s">&quot;Vertical&quot;</span>
-                 <span class="na">VerticalOptions=</span><span class="s">&quot;Center&quot;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;BoxView</span> <span class="na">Color=</span><span class="s">&quot;Blue&quot;</span>
-                <span class="na">WidthRequest=</span><span class="s">&quot;160&quot;</span>
-                <span class="na">HeightRequest=</span><span class="s">&quot;160&quot;</span>
-                <span class="na">VerticalOptions=</span><span class="s">&quot;Center&quot;</span>
-                <span class="na">HorizontalOptions=</span><span class="s">&quot;Center&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;StackLayout</span> <span class="na">Orientation=</span><span class="s">"Vertical"</span>
+                 <span class="na">VerticalOptions=</span><span class="s">"Center"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;BoxView</span> <span class="na">Color=</span><span class="s">"Blue"</span>
+                <span class="na">WidthRequest=</span><span class="s">"160"</span>
+                <span class="na">HeightRequest=</span><span class="s">"160"</span>
+                <span class="na">VerticalOptions=</span><span class="s">"Center"</span>
+                <span class="na">HorizontalOptions=</span><span class="s">"Center"</span> <span class="nt">/&gt;</span>
     <span class="nt">&lt;/StackLayout&gt;</span>
   <span class="nt">&lt;/ContentPage.Content&gt;</span>
 <span class="nt">&lt;/ContentPage&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Create the MainPage.fs</strong></li>
+  <li><strong>Create the MainPage.fs</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-fsharp" data-lang="fsharp"><span></span><span class="k">namespace</span> <span class="n">Innt</span>
 
-<span class="k">open</span> <span class="nn">Xamarin.Forms</span>
-<span class="k">open</span> <span class="nn">Xamarin.Forms.Xaml</span>
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nc">Innt</span>
 
-<span class="k">type</span> <span class="nc">MainPage</span><span class="bp">()</span> <span class="o">=</span>
-    <span class="k">inherit</span> <span class="n">ContentPage</span><span class="bp">()</span>
+<span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nc">Forms</span>
+<span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nc">Xaml</span>
 
-    <span class="k">do</span> <span class="k">base</span><span class="o">.</span><span class="n">LoadFromXaml</span><span class="o">(</span><span class="n">typeof</span><span class="o">&lt;</span><span class="n">MainPage</span><span class="o">&gt;)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</code></pre></div>
+<span class="k">type</span> <span class="nc">MainPage</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">inherit</span> <span class="nc">ContentPage</span><span class="bp">()</span>
+
+    <span class="k">do</span> <span class="k">base</span><span class="p">.</span><span class="nc">LoadFromXaml</span><span class="p">(</span><span class="n">typeof</span><span class="p">&lt;</span><span class="nc">MainPage</span><span class="o">&gt;)</span> <span class="p">|&gt;</span> <span class="n">ignore</span>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Configure the project</strong></li>
+  <li><strong>Configure the project</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;Project</span> <span class="na">Sdk=</span><span class="s">&quot;Microsoft.NET.Sdk&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Project</span> <span class="na">Sdk=</span><span class="s">"Microsoft.NET.Sdk"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;PropertyGroup&gt;</span>
     <span class="nt">&lt;TargetFramework&gt;</span>netstandard2.0<span class="nt">&lt;/TargetFramework&gt;</span>
   <span class="nt">&lt;/PropertyGroup&gt;</span>
 
   <span class="nt">&lt;ItemGroup&gt;</span>
-    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">&quot;MainView.fs&quot;</span> <span class="nt">/&gt;</span>
-    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">&quot;App.fs&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"MainView.fs"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"App.fs"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/ItemGroup&gt;</span>
 
   <span class="nt">&lt;ItemGroup&gt;</span>
-    <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms&quot;</span> <span class="na">Version=</span><span class="s">&quot;3.0.0.482510&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms"</span> <span class="na">Version=</span><span class="s">"3.0.0.482510"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/ItemGroup&gt;</span>
 <span class="nt">&lt;/Project&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Build it (you can use dotnet cli or msbuild since it&#39;s a netstandard project)</strong></li>
+  <li><strong>Build it (you can use dotnet cli or msbuild since it’s a netstandard project)</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span># with dotnet cli
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># with dotnet cli
 dotnet build
 # with msbuild
 msbuild /t:Build
-</code></pre></div>
+</code></pre></div></div>
 <div class="code-comment">
 you can use dotnet cli or msbuild since it's a netstandard project
 </div>
 
-<h3>Create the Gtk application</h3>
+<h3 id="create-the-gtk-application">Create the Gtk application</h3>
 
 <ul>
-<li><strong>Change the project definition</strong></li>
+  <li><strong>Change the project definition</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-<span class="nt">&lt;Project</span> <span class="na">DefaultTargets=</span><span class="s">&quot;Build&quot;</span> <span class="na">ToolsVersion=</span><span class="s">&quot;4.0&quot;</span> <span class="na">xmlns=</span><span class="s">&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;Project</span> <span class="na">DefaultTargets=</span><span class="s">"Build"</span> <span class="na">ToolsVersion=</span><span class="s">"4.0"</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/developer/msbuild/2003"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;PropertyGroup&gt;</span>
-      <span class="nt">&lt;Configuration</span> <span class="na">Condition=</span><span class="s">&quot; &#39;$(Configuration)&#39; == &#39;&#39; &quot;</span><span class="nt">&gt;</span>Debug<span class="nt">&lt;/Configuration&gt;</span>
-      <span class="nt">&lt;Platform</span> <span class="na">Condition=</span><span class="s">&quot; &#39;$(Platform)&#39; == &#39;x86&#39; &quot;</span><span class="nt">&gt;&lt;/Platform&gt;</span>
+      <span class="nt">&lt;Configuration</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)' == '' "</span><span class="nt">&gt;</span>Debug<span class="nt">&lt;/Configuration&gt;</span>
+      <span class="nt">&lt;Platform</span> <span class="na">Condition=</span><span class="s">" '$(Platform)' == 'x86' "</span><span class="nt">&gt;&lt;/Platform&gt;</span>
       <span class="nt">&lt;OutputType&gt;</span>Exe<span class="nt">&lt;/OutputType&gt;</span>
       <span class="nt">&lt;RootNamespace&gt;</span>Innt<span class="nt">&lt;/RootNamespace&gt;</span>
       <span class="nt">&lt;AssemblyName&gt;</span>Innt.Gtk<span class="nt">&lt;/AssemblyName&gt;</span>
@@ -208,7 +226,7 @@ you can use dotnet cli or msbuild since it's a netstandard project
       <span class="nt">&lt;AutoGenerateBindingRedirects&gt;</span>true<span class="nt">&lt;/AutoGenerateBindingRedirects&gt;</span>
       <span class="nt">&lt;ProjectGuid&gt;</span>{0076E36A-1998-48A5-9F45-2BDE5920204F}<span class="nt">&lt;/ProjectGuid&gt;</span>
   <span class="nt">&lt;/PropertyGroup&gt;</span>
-  <span class="nt">&lt;PropertyGroup</span> <span class="na">Condition=</span><span class="s">&quot; &#39;$(Configuration)|$(Platform)&#39; == &#39;Debug|x86&#39; &quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;PropertyGroup</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)|$(Platform)' == 'Debug|x86' "</span><span class="nt">&gt;</span>
     <span class="nt">&lt;DebugSymbols&gt;</span>true<span class="nt">&lt;/DebugSymbols&gt;</span>
     <span class="nt">&lt;DebugType&gt;</span>full<span class="nt">&lt;/DebugType&gt;</span>
     <span class="nt">&lt;Optimize&gt;</span>false<span class="nt">&lt;/Optimize&gt;</span>
@@ -220,116 +238,125 @@ you can use dotnet cli or msbuild since it's a netstandard project
   <span class="nt">&lt;/PropertyGroup&gt;</span>
 
   <span class="nt">&lt;ItemGroup&gt;</span>
-    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">&quot;Program.fs&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"Program.fs"</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/ItemGroup&gt;</span>
 
   <span class="nt">&lt;PropertyGroup&gt;</span>
       <span class="nt">&lt;FSharpTargetsPath&gt;</span>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets<span class="nt">&lt;/FSharpTargetsPath&gt;</span>
   <span class="nt">&lt;/PropertyGroup&gt;</span>
-  <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">&quot;$(FSharpTargetsPath)&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"$(FSharpTargetsPath)"</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/Project&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
 <div class="code-comment">
   The GTK application must be compiled and executed with <strong>mono</strong>, so we have to change the project definition. You can create a <strong>fsharp</strong> project with <strong>monodevelop</strong> or paste/change the following xml.
 </div>
 
 <ul>
-<li><strong>Add nuget dependencies and restore them</strong></li>
+  <li><strong>Add nuget dependencies and restore them</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;packages&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Xamarin.Forms&quot;</span> <span class="na">version=</span><span class="s">&quot;3.0.0.482510&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net461&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">&quot;Xamarin.Forms.Platform.GTK&quot;</span> <span class="na">version=</span><span class="s">&quot;3.0.0.482510&quot;</span> <span class="na">targetFramework=</span><span class="s">&quot;net461&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Xamarin.Forms"</span> <span class="na">version=</span><span class="s">"3.0.0.482510"</span> <span class="na">targetFramework=</span><span class="s">"net461"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;package</span> <span class="na">id=</span><span class="s">"Xamarin.Forms.Platform.GTK"</span> <span class="na">version=</span><span class="s">"3.0.0.482510"</span> <span class="na">targetFramework=</span><span class="s">"net461"</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/packages&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
 <div class="code-comment">
 Create the nuget <strong>packages.config</strong> (in HelloWorld.GTK directory)
 </div>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span>cd HelloWorld.GTK
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd HelloWorld.GTK
 nuget restore
-</code></pre></div>
+</code></pre></div></div>
 <div class="code-comment">
 Restore the nuget packages
 </div>
 
 <ul>
-<li><strong>Add a reference to the Xamarin.Forms common project</strong></li>
+  <li><strong>Add a reference to the Xamarin.Forms common project</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;ItemGroup&gt;</span>
-  <span class="nt">&lt;ProjectReference</span> <span class="na">Include=</span><span class="s">&quot;..\HelloWorld\HelloWorld.fsproj&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ItemGroup&gt;</span>
+  <span class="nt">&lt;ProjectReference</span> <span class="na">Include=</span><span class="s">"..\HelloWorld\HelloWorld.fsproj"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;Name&gt;</span>HelloWorld<span class="nt">&lt;/Name&gt;</span>
   <span class="nt">&lt;/ProjectReference&gt;</span>
 <span class="nt">&lt;/ItemGroup&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
 <div class="code-comment">
 Paste the following <i>ItemGroup</i> to <strong>HelloWorld.GTK.fsproj</strong>
 </div>
 
 <ul>
-<li><strong>Add the dependencies to the project definition (HelloWorld.GTK.fsproj)</strong></li>
+  <li><strong>Add the dependencies to the project definition (HelloWorld.GTK.fsproj)</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;ItemGroup&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;mscorlib&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;System&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;/usr/lib/mono/4.5/FSharp.Core.dll&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&quot;</span> <span class="nt">/&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&quot;</span><span class="nt">&gt;</span>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ItemGroup&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"mscorlib"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"/usr/lib/mono/4.5/FSharp.Core.dll"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;SpecificVersion&gt;</span>False<span class="nt">&lt;/SpecificVersion&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;SpecificVersion&gt;</span>False<span class="nt">&lt;/SpecificVersion&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;SpecificVersion&gt;</span>False<span class="nt">&lt;/SpecificVersion&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Core.Design&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Core.Design"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Design\Xamarin.Forms.Core.Design.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Xaml.Design&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Xaml.Design"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Design\Xamarin.Forms.Xaml.Design.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Core&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Core"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Core.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Platform&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Platform"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Platform.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Xaml&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Xaml"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.3.0.0.482510\lib\netstandard2.0\Xamarin.Forms.Xaml.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
-  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">&quot;Xamarin.Forms.Platform.GTK&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms.Platform.GTK"</span><span class="nt">&gt;</span>
     <span class="nt">&lt;HintPath&gt;</span>.\packages\Xamarin.Forms.Platform.GTK.3.0.0.482510\lib\net45\Xamarin.Forms.Platform.GTK.dll<span class="nt">&lt;/HintPath&gt;</span>
   <span class="nt">&lt;/Reference&gt;</span>
 <span class="nt">&lt;/ItemGroup&gt;</span>
-</code></pre></div>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Program.fs</strong></li>
+  <li><strong>Program.fs</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-fsharp" data-lang="fsharp"><span></span>  <span class="k">open</span> <span class="nn">System</span>
-  <span class="k">open</span> <span class="nn">Xamarin.Forms</span>
-  <span class="k">open</span> <span class="nn">Xamarin.Forms.Platform.GTK</span>
 
-  <span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
-  <span class="o">[&lt;</span><span class="n">STAThread</span><span class="o">&gt;]</span>
-  <span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
-    <span class="nn">Gtk</span><span class="p">.</span><span class="nn">Application</span><span class="p">.</span><span class="n">Init</span><span class="bp">()</span>
-    <span class="nn">Forms</span><span class="p">.</span><span class="n">Init</span><span class="bp">()</span>
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">open</span> <span class="nc">System</span>
+  <span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nc">Forms</span>
+  <span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nn">Platform</span><span class="p">.</span><span class="nc">GTK</span>
 
-    <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="k">new</span> <span class="nn">Innt</span><span class="p">.</span><span class="n">App</span><span class="bp">()</span>
-    <span class="k">let</span> <span class="nv">window</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FormsWindow</span><span class="bp">()</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">LoadApplication</span><span class="o">(</span><span class="n">app</span><span class="o">)</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">SetApplicationTitle</span><span class="o">(</span><span class="s">&quot;Sample&quot;</span><span class="o">)</span>
-    <span class="n">window</span><span class="o">.</span><span class="n">Show</span><span class="bp">()</span>
+  <span class="p">[&lt;</span><span class="nc">EntryPoint</span><span class="p">&gt;]</span>
+  <span class="p">[&lt;</span><span class="nc">STAThread</span><span class="p">&gt;]</span>
+  <span class="k">let</span> <span class="n">main</span> <span class="n">argv</span> <span class="p">=</span>
+    <span class="nn">Gtk</span><span class="p">.</span><span class="nn">Application</span><span class="p">.</span><span class="nc">Init</span><span class="bp">()</span>
+    <span class="nn">Forms</span><span class="p">.</span><span class="nc">Init</span><span class="bp">()</span>
 
-    <span class="nn">Gtk</span><span class="p">.</span><span class="nn">Application</span><span class="p">.</span><span class="n">Run</span><span class="bp">()</span>
+    <span class="k">let</span> <span class="n">app</span> <span class="p">=</span> <span class="k">new</span> <span class="nn">Innt</span><span class="p">.</span><span class="nc">App</span><span class="bp">()</span>
+    <span class="k">let</span> <span class="n">window</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">FormsWindow</span><span class="bp">()</span>
+    <span class="n">window</span><span class="p">.</span><span class="nc">LoadApplication</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">window</span><span class="p">.</span><span class="nc">SetApplicationTitle</span><span class="p">(</span><span class="s2">"Sample"</span><span class="p">)</span>
+    <span class="n">window</span><span class="p">.</span><span class="nc">Show</span><span class="bp">()</span>
+
+    <span class="nn">Gtk</span><span class="p">.</span><span class="nn">Application</span><span class="p">.</span><span class="nc">Run</span><span class="bp">()</span>
     <span class="mi">0</span>
-</code></pre></div>
+</code></pre></div></div>
+
 <ul>
-<li><strong>Build it and test it</strong></li>
+  <li><strong>Build it and test it</strong></li>
 </ul>
-<div class="highlight"><pre><code class="language-text" data-lang="text"><span></span>msbuild /t:Build /p:Platform=&quot;x86&quot;
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msbuild /t:Build /p:Platform="x86"
 mono bin/Debug/HelloWorld.Gtk.exe
-</code></pre></div>
+</code></pre></div></div>
+
 </div>
 
 

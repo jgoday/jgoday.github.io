@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Xamarin Forms with F#: Part 2 (WPF)</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+        <link rel="alternate" type="application/rss+xml" title="jgoday.github.io" href="/feed.xml">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">jgoday.github.io</a></h1>
+              <div class="links">
+                  <a href="/feed.xml">
+                     <img src="/assets/rss.png" />
+                  </a>
+              </div>
+            </div>
+
+                <h2 class="post-title">Xamarin Forms with F#: Part 2 (WPF)</h2>
+
+<div class="content">
+<div class="post-categories">
+    
+    
+    <a href="/categories/#xamarin.forms">xamarin.forms</a>
+    &nbsp;
+    
+    <a href="/categories/#f#">f#</a>
+    
+    
+  </div>
+
+<p class="meta">29 May 2018</p>
+
+
+<div class="post">
+<p>The last post, <a href="http://jgoday.github.io/xamarin.forms/f%23/2018/05/21/xamarin_forms.html">Hello world GTK</a>, was about writting a GTK application with Xamarin.Forms and F# on linux.</p>
+
+<p>Now, it’s time for the WPF Backend, without any tooling support.</p>
+
+<p>I tested it with Visual Studio 2017 Community Preview (‘Desktop Development with .NET’ workload installed).</p>
+
+<p><img src="/assets/dotNetDesktopDevelopment.png" alt="Image of Desktop Development with .NET" /></p>
+
+<p>I have used the following aliases in PowerShell</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Set-Alias nuget ~/Apps/nuget.exe
+Set-Alias msbuild <span class="s1">'C:\Program Files (x86)\Microsoft Visual Studio\Preview\Community\MSBuild\15.0\Bin\MSBuild'</span>
+
+</code></pre></div></div>
+<p>The full code is on github <a href="https://github.com/jgoday/xamarinForms-FSharpTemplate">https://github.com/jgoday/xamarinForms-FSharpTemplate</a>.</p>
+
+<p>The main problem here, is the lack of <strong>‘Partial classes’</strong> in FSharp, to define the logic and the xaml presentation declaration in different files (the XAML definition and the ‘Code Behind’ file).
+So you have to load the xaml manually (without x:Class attribute) and make the bindings yourself,
+or use something like FsXaml <a href="https://github.com/fsprojects/FsXaml">F# Tools for working with XAML Projects</a>.</p>
+
+<h3 id="load-xaml-files">Load Xaml files</h3>
+
+<p>To load manually a Xaml file:</p>
+<ul>
+  <li>The Xaml file must be marked as ‘<strong>Embed resource</strong>’ in the fsproj ile.</li>
+  <li><strong>System.Xml.XmlReader</strong> and <strong>System.Windows.Markup.XamlReader</strong> will be used to load the Xaml file and casted (:?&gt; ‘a) to a WPF control type.</li>
+  <li>You can reference the Xaml file directly or use ‘<a href="https://docs.microsoft.com/en-us/dotnet/framework/wpf/app-development/pack-uris-in-wpf">Pack URIs</a>’ (if the Xaml file is in another assembly)</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">loadXaml</span><span class="p">&lt;</span><span class="k">'</span><span class="n">a</span><span class="o">&gt;(</span><span class="n">path</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="n">streamInfo</span> <span class="p">=</span> <span class="nn">Application</span><span class="p">.</span><span class="nc">GetResourceStream</span><span class="p">(</span><span class="k">new</span> <span class="nc">Uri</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nn">UriKind</span><span class="p">.</span><span class="nc">RelativeOrAbsolute</span><span class="o">))</span>
+    <span class="k">use</span> <span class="n">stream</span> <span class="p">=</span> <span class="n">streamInfo</span><span class="p">.</span><span class="nc">Stream</span>
+    <span class="k">use</span> <span class="n">xaml</span> <span class="p">=</span> <span class="nn">XmlReader</span><span class="p">.</span><span class="nc">Create</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+    <span class="nn">XamlReader</span><span class="p">.</span><span class="nc">Load</span><span class="p">(</span><span class="n">xaml</span><span class="p">)</span> <span class="o">:?&gt;</span> <span class="k">'</span><span class="n">a</span>
+
+<span class="k">let</span> <span class="n">mainWindow</span> <span class="p">=</span> <span class="n">loadXaml</span><span class="p">&lt;</span><span class="nn">System</span><span class="p">.</span><span class="nn">Windows</span><span class="p">.</span><span class="nc">Window</span><span class="o">&gt;(</span><span class="k">new</span> <span class="nc">Uri</span><span class="p">(</span><span class="s2">"pack://application:,,,/MainWindow.xaml"</span><span class="o">))</span>
+<span class="c1">// or simply</span>
+<span class="k">let</span> <span class="n">mainWindow</span> <span class="p">=</span> <span class="n">loadXaml</span><span class="p">&lt;</span><span class="nn">System</span><span class="p">.</span><span class="nn">Windows</span><span class="p">.</span><span class="nc">Window</span><span class="o">&gt;(</span><span class="k">new</span> <span class="nc">Uri</span><span class="p">(</span><span class="s2">"MainWindow.xaml"</span><span class="o">))</span>
+</code></pre></div></div>
+
+<h3 id="application-lifecycle-events">Application lifecycle events</h3>
+
+<p><strong>FsXaml</strong> takes advantage of F# type providers in compile time, to load the markup definition and generate a base class that you can extend later to customize his behaviour.</p>
+
+<p>For instance, If you want to control the application lifecycle events.</p>
+
+<ul>
+  <li>Define the event and the handler in the Xaml file</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">&lt;</span><span class="nc">Application</span> <span class="n">xmlns</span><span class="p">=</span><span class="s2">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+             <span class="n">xmlns</span><span class="p">:</span><span class="n">x</span><span class="p">=</span><span class="s2">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+             <span class="nc">Startup</span><span class="p">=</span><span class="s2">"AppStart"</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nn">Application</span><span class="p">.</span><span class="nc">Resources</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nc">ResourceDictionary</span><span class="p">&gt;</span>
+        <span class="o">&lt;/</span><span class="nc">ResourceDictionary</span><span class="p">&gt;</span>
+    <span class="o">&lt;/</span><span class="nn">Application</span><span class="p">.</span><span class="nc">Resources</span><span class="p">&gt;</span>
+<span class="o">&lt;/</span><span class="nc">Application</span><span class="p">&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Use FsXaml</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">WPF</span>
+
+<span class="k">open</span> <span class="nc">System</span>
+<span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Windows</span>
+
+<span class="k">open</span> <span class="nc">FsXaml</span>
+<span class="k">type</span> <span class="nc">AppBase</span> <span class="p">=</span> <span class="nc">XAML</span><span class="p">&lt;</span><span class="s2">"App.xaml"</span><span class="p">&gt;</span>
+
+<span class="k">type</span> <span class="nc">App</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">inherit</span> <span class="nc">AppBase</span><span class="bp">()</span>
+
+    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nc">AppStart</span> <span class="p">(</span><span class="n">sender</span><span class="p">:</span> <span class="nc">Object</span><span class="p">)</span> <span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nc">StartupEventArgs</span><span class="p">)</span> <span class="p">:</span> <span class="kt">unit</span> <span class="p">=</span>
+        <span class="n">printfn</span> <span class="s2">"Application start: %A !!"</span> <span class="n">args</span>
+
+</code></pre></div></div>
+
+<h3 id="wpf-and-f-files">WPF and F# Files</h3>
+
+<ul>
+  <li>Program.fs</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">System</span>
+<span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Windows</span>
+
+<span class="p">[&lt;</span><span class="nc">STAThread</span><span class="p">&gt;]</span>
+<span class="p">[&lt;</span><span class="nc">EntryPoint</span><span class="p">&gt;]</span>
+<span class="k">let</span> <span class="n">main</span> <span class="p">_</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="n">app</span> <span class="p">=</span> <span class="nn">XamlUtils</span><span class="p">.</span><span class="n">loadXaml</span><span class="p">&lt;</span><span class="nc">Application</span><span class="o">&gt;(</span><span class="s2">"App.xaml"</span><span class="p">)</span>
+    <span class="k">let</span> <span class="n">mainWindow</span> <span class="p">=</span> <span class="k">new</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nn">WPF</span><span class="p">.</span><span class="nc">MainWindow</span><span class="bp">()</span>
+    <span class="n">app</span><span class="p">.</span><span class="nc">Run</span><span class="p">(</span><span class="n">mainWindow</span><span class="p">)</span>
+</code></pre></div></div>
+<div class="code-comment">
+Load the WPF application and main window.
+</div>
+
+<ul>
+  <li>App.xaml</li>
+</ul>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Application</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+             <span class="na">xmlns:x=</span><span class="s">"http://schemas.microsoft.com/winfx/2006/xaml"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Application.Resources&gt;</span>
+        <span class="nt">&lt;ResourceDictionary&gt;</span>
+        <span class="nt">&lt;/ResourceDictionary&gt;</span>
+    <span class="nt">&lt;/Application.Resources&gt;</span>
+<span class="nt">&lt;/Application&gt;</span>
+</code></pre></div></div>
+<div class="code-comment">
+WPF application common resources and lifecycle events.
+</div>
+
+<ul>
+  <li>App.xaml.fs</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">WPF</span>
+
+<span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Windows</span>
+
+<span class="k">type</span> <span class="nc">App</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">inherit</span> <span class="nc">Application</span><span class="bp">()</span>
+</code></pre></div></div>
+<div class="code-comment">
+This code begind class is not really needed (in fact, is not even used if you load the App.xaml manually), unless you want to control application events (start, finish,...), in this case, you have to use FsXaml.
+</div>
+
+<ul>
+  <li>MainWindow.xaml</li>
+</ul>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;wpf:FormsApplicationPage</span>
+        <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+        <span class="na">xmlns:x=</span><span class="s">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+        <span class="na">xmlns:d=</span><span class="s">"http://schemas.microsoft.com/expression/blend/2008"</span>
+        <span class="na">xmlns:mc=</span><span class="s">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span>
+        <span class="na">xmlns:wpf=</span><span class="s">"clr-namespace:Xamarin.Forms.Platform.WPF;assembly=Xamarin.Forms.Platform.WPF"</span>
+        <span class="na">mc:Ignorable=</span><span class="s">"d"</span>
+        <span class="na">WindowState=</span><span class="s">"Normal"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/wpf:FormsApplicationPage&gt;</span>
+</code></pre></div></div>
+<div class="code-comment">
+</div>
+
+<ul>
+  <li>MainWindow.xaml.fs</li>
+</ul>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">namespace</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">WPF</span>
+
+<span class="k">open</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nn">Platform</span><span class="p">.</span><span class="nc">WPF</span>
+
+<span class="k">open</span> <span class="nc">FsXaml</span>
+<span class="k">type</span> <span class="nc">MainWindowBase</span> <span class="p">=</span> <span class="nc">XAML</span><span class="p">&lt;</span><span class="s2">"MainWindow.xaml"</span><span class="p">&gt;</span>
+
+<span class="k">type</span> <span class="nc">MainWindow</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">inherit</span> <span class="nc">MainWindowBase</span><span class="bp">()</span>
+
+    <span class="k">do</span>
+        <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nc">Init</span><span class="bp">()</span>
+        <span class="k">base</span><span class="p">.</span><span class="nc">LoadApplication</span><span class="p">(</span><span class="k">new</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">App</span><span class="bp">()</span><span class="p">)</span>
+</code></pre></div></div>
+<div class="code-comment">
+The WPF mainWindow will load the common app after initialize Xamarin.Forms.
+</div>
+
+<ul>
+  <li>Compile and run it.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>HelloWorld<span class="se">\H</span>elloWorld
+dotnet build
+<span class="nb">cd</span> ..<span class="se">\H</span>elloWorld<span class="se">\H</span>elloWorld.WPF
+nuget restore <span class="nt">-PackagesDirectory</span> ..<span class="se">\p</span>ackages
+msbuild /t:Build
+bin<span class="se">\D</span>ebug<span class="se">\H</span>elloWorld.WPF.exe
+</code></pre></div></div>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://jgoday-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+            <div class="footer">
+              <div class="brands pull-right md padding">
+                <a href="https://www.linkedin.com/in/javier-goday-3a1b417b/"><img src="/assets/In-Black-48px-TM.png" /></a>
+                <a href="https://github.com/jgoday"><img src="/assets/GitHub-Mark-64px.png" /></a>
+              </div>
+
+              <div class="contact">
+                <p>
+                  <a href="https://github.com/jgoday">github.com/jgoday</a><br />
+                  jgoday at gmail dot com
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119691458-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-119691458-1');
+</script>
+
+    </body>
+</html>
