@@ -1,0 +1,6 @@
+<Project>
+    <PropertyGroup>
+        <XamarinFormsVersion>3.1.0.530888-pre2</XamarinFormsVersion>
+        <AndroidSupportVersion>26.1.0.1</AndroidSupportVersion>
+    </PropertyGroup>
+</Project>

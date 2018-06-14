@@ -1,0 +1,354 @@
+* https://github.com/0xFireball/xamarin-android-linux
+
+* Download prebuilt releases
+```
+https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/
+```
+In my case, Ubuntu 18.04 -> https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/processDownloadRequest/xamarin-android/xamarin.android-oss_8.3.99.189_amd64.deb
+
+sudo dpkg -i xamarin.android-oss_8.3.99.189_amd64.deb
+
+/usr/lib/xamarin.android/
+
+
+* Configure android sdk
+```
+export ANDROID_SDK_PATH=$HOME/Android/Sdk
+export ANDROID_NDK_PATH=$HOME/Android/Sdk/ndk-bundle
+```
+
+* MSBuild project definition
+https://msdn.microsoft.com/en-us/library/dd576348.aspx
+
+MSBuild definitions is really simple
+
+```
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+</Project>
+```
+
+FSharp support (default target + FSharpTargetsPath)
+```
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+
+    <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+    </PropertyGroup>
+    <Import Project="$(FSharpTargetsPath)" />
+</Project>
+```
+
+Sources
+```
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+
+    <ItemGroup>
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+    </PropertyGroup>
+    <Import Project="$(FSharpTargetsPath)" />
+</Project>
+```
+
+Xamarin dependencies
+```
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Android.Support.Design" Version="25.4.0.2" />
+    <PackageReference Include="Xamarin.Android.Support.v4" Version="25.4.0.2" />
+    <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="25.4.0.2" />
+    <PackageReference Include="Xamarin.Android.Support.v7.CardView" Version="25.4.0.2" />
+    <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="25.4.0.2" />
+    <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
+  </ItemGroup>
+```
+
+System & Framework dependencies
+```
+  <ItemGroup>
+    <Reference Include="Mono.Android" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ObjectModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+```
+
+Reference to common Xamarin.Forms project
+```
+  <ItemGroup>
+    <ProjectReference Include="..\HelloWorld\HelloWorld.fsproj">
+      <Project>{F2A71F9B-5D33-465A-A702-920D77279786}</Project>
+      <Name>HelloWorld</Name>
+    </ProjectReference>
+  </ItemGroup>
+```
+????? WHY Project GUUID
+
+Import android Targets
+```
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+```
+
+Common project properties
+```
+<PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{42F9F6D1-9DF3-42BC-84FC-1A593A2D4EC9}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HelloWorld.Droid</RootNamespace>
+    <AssemblyName>HelloWorld.Android</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <AndroidApplication>true</AndroidApplication>
+    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <JavaMaximumHeapSize />
+    <NuGetPackageImportStamp />
+  </PropertyGroup>
+```
+TODO: Focus on adnroid properties
+
+Debug properties (i ommit the release ones)
+```
+<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+```
+
+Android Resources (drawable icons and manifest, Area layout and styles necessary ??)
+```
+    <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AndroidManifest.xml" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Tabbar.axml" />
+    <AndroidResource Include="Resources\layout\Toolbar.axml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+  </ItemGroup>
+```
+
+* Full project definition
+```
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+    <!-- Common properties -->
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProductVersion>8.0.30703</ProductVersion>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{42F9F6D1-9DF3-42BC-84FC-1A593A2D4EC9}</ProjectGuid>
+        <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>HelloWorld.Droid</RootNamespace>
+        <AssemblyName>HelloWorld.Android</AssemblyName>
+        <FileAlignment>512</FileAlignment>
+        <AndroidApplication>true</AndroidApplication>
+        <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+        <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+        <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+        <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+        <JavaMaximumHeapSize />
+        <NuGetPackageImportStamp />
+    </PropertyGroup>
+    <!-- DEBUG properties -->
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+        <AndroidLinkMode>None</AndroidLinkMode>
+    </PropertyGroup>
+
+    <!-- SOURCES -->
+    <ItemGroup>
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <!-- RESOURCES -->
+    <ItemGroup>
+        <AndroidResource Include="Resources\drawable\icon.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="Properties\AndroidManifest.xml" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+
+    <!-- common xamarin forms project -->
+    <ItemGroup>
+        <ProjectReference Include="..\HelloWorld\HelloWorld.fsproj">
+        <Project>{F2A71F9B-5D33-465A-A702-920D77279786}</Project>
+        <Name>HelloWorld</Name>
+        </ProjectReference>
+    </ItemGroup>
+
+    <!-- dependencies -->
+    <ItemGroup>
+        <PackageReference Include="Xamarin.Android.Support.Design" Version="25.4.0.2" />
+        <PackageReference Include="Xamarin.Android.Support.v4" Version="25.4.0.2" />
+        <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="25.4.0.2" />
+        <PackageReference Include="Xamarin.Android.Support.v7.CardView" Version="25.4.0.2" />
+        <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="25.4.0.2" />
+        <PackageReference Include="Xamarin.Forms" Version="3.0.0.482510" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Mono.Android" />
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.ObjectModel" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+
+    <!-- imports -->
+    <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+
+
+
+    <PropertyGroup>
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+    </PropertyGroup>
+    <Import Project="$(FSharpTargetsPath)" />
+</Project>
+```
+
+http://mike-ward.net/2012/05/26/learning-fndashassembly-level-attributes/
+* Properties/AssemblyInfo.fs
+```
+namespace HelloWorld.Droid
+
+open System.Reflection
+open System.Runtime.CompilerServices
+open System.Runtime.InteropServices
+open Android.App
+
+[<assembly: AssemblyTitle("HelloWorld.Droid")>]
+[<assembly: AssemblyDescription("")>]
+[<assembly: AssemblyConfiguration("")>]
+[<assembly: AssemblyCompany("")>]
+[<assembly: AssemblyProduct("HelloWorld.Droid")>]
+[<assembly: AssemblyCopyright("Copyright ©  2018")>]
+[<assembly: AssemblyTrademark("")>]
+[<assembly: AssemblyCulture("")>]
+[<assembly: ComVisible(false)>]
+
+[<assembly: AssemblyVersion("1.0.0.0")>]
+[<assembly: AssemblyFileVersion("1.0.0.0")>]
+
+// Android permissions
+[<assembly: UsesPermission(Android.Manifest.Permission.Internet)>]
+[<assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)>]
+
+
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Android.App;
+
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("BasicBoxView.Android")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("BasicBoxView.Android")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: ComVisible(false)]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Build and Revision Numbers 
+// by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Add some common permissions, these can be removed if not needed
+[assembly: UsesPermission(Android.Manifest.Permission.Internet)]
+[assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
+
+```
+
+* Code
+```
+using System;
+
+using Android.App;
+using Android.Content.PM;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+using Android.OS;
+
+namespace BasicBoxView.Droid
+{
+    [Activity(Label = "BasicBoxView", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+    {
+        protected override void OnCreate(Bundle bundle)
+        {
+            TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+
+            base.OnCreate(bundle);
+
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            LoadApplication(new App());
+        }
+    }
+}
+
+```
+
+* AndroidManifest.xml
+
+* Resources
+** Drawable icon
+
+* Nuget restore
+nuget restore HelloWorld.Droid.fsproj
+https://docs.microsoft.com/en-gb/xamarin/android/deploy-test/building-apps/build-process
+* msbuild /t:Build
+* msbuild /t:BuildApk
+* msbuild /t:SignAndroidPackage
+* adb install -r bin/Debug/HelloWorld.Droid-Signed.apk
+
+./obj/Debug/android/bin/HelloWorld.Droid.apk
+

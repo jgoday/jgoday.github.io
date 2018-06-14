@@ -1,0 +1,25 @@
+<ul>
+  <li>
+    <p>https://github.com/0xFireball/xamarin-android-linux</p>
+  </li>
+  <li>
+    <p>Download prebuilt releases</p>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/
+</code></pre></div>    </div>
+    <p>In my case, Ubuntu 18.04 -&gt; https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/processDownloadRequest/xamarin-android/xamarin.android-oss_8.3.99.189_amd64.deb</p>
+  </li>
+</ul>
+
+<p>sudo dpkg -i xamarin.android-oss_8.3.99.189_amd64.deb</p>
+
+<p>/usr/lib/xamarin.android/</p>
+
+<ul>
+  <li>Configure android sdk
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export ANDROID_SDK_PATH=$HOME/Android/Sdk
+export ANDROID_NDK_PATH=$HOME/Android/Sdk/ndk-bundle
+</code></pre></div>    </div>
+  </li>
+  <li>Test
+/path/to/xamarin.android-oss*/bin/Debug/bin/xabuild /path/to/samples/HelloWorld/HelloWorld.csproj</li>
+</ul>

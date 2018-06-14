@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>Xamarin Forms with F#: Part 3 (Android)</title>
+
+        <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css' />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css' />
+        <link rel="alternate" type="application/rss+xml" title="jgoday.github.io" href="/feed.xml" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+        <link href="/css/main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header>
+            <h1>jgoday.github.io</h1>
+
+            <section class="links">
+                <a href="/feed.xml">
+                   <img src="/assets/rss.png" />
+                </a>
+            </section>
+            
+            <section class="subheader">
+                <a href='/' >Home</a>
+                <a href='/categories' >Categories</a>
+                <a href='/about' >About</a>
+            </section>
+        </header>
+
+        <aside class="left-sidebar"></aside>
+        <section class="content"><h2 class="post-title">Xamarin Forms with F#: Part 3 (Android)</h2>
+
+<div class="post-content">
+<div class="post-categories">
+    
+    
+    <a href="/categories/#xamarin.forms">xamarin.forms</a>
+    &nbsp;
+    
+    <a href="/categories/#f#">f#</a>
+    
+    
+  </div>
+
+<p class="meta">12 Jun 2018</p>
+
+
+<div class="post">
+<p>In this post, I will test an <strong>Android</strong> <strong>Xamarin.Forms</strong> application with <strong>F#</strong> in <strong>linux</strong>.</p>
+
+<p>In theory there is no official <strong>Xamarin</strong> support for this platform,
+but there are some prebuilt packages published for some distros.</p>
+
+<p>After install <strong>xamarin-android</strong> package, you can use <strong>MSBuild</strong> to compile, generate and sign Android apks.</p>
+
+<p>It will install both <em>Xamarin.Android.FSharp.targets</em> and <em>Xamarin.Android.CSharp.targets</em>.</p>
+
+<p>See <a href="https://github.com/0xFireball/xamarin-android-linux">https://github.com/0xFireball/xamarin-android-linux</a> for more information.</p>
+
+<p>So, first step is download the prebuilt packages:</p>
+
+<h1 id="install-xamarin-android-on-linux">Install xamarin android on linux</h1>
+
+<ul>
+  <li>
+    <p>Download prebuilt releases
+from
+<a href="https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/">xamarin-android-linux</a>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dpkg <span class="nt">-i</span> xamarin.android-oss_8.3.99.189_amd64.deb
+
+  /usr/lib/xamarin.android/
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configure Android SDK paths.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="nb">export </span><span class="nv">ANDROID_SDK_PATH</span><span class="o">=</span><span class="nv">$HOME</span>/Android/Sdk
+  <span class="nb">export </span><span class="nv">ANDROID_NDK_PATH</span><span class="o">=</span><span class="nv">$HOME</span>/Android/Sdk/ndk-bundle
+
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h1 id="define-xamarin-android-project">Define Xamarin Android project</h1>
+<ul>
+  <li>
+    <p>Xamarin Android will run with <a href="https://www.mono-project.com/">mono</a>, so we cannot use <i>dotnet cli</i> to generate the project, but the <strong><a href="https://msdn.microsoft.com/en-us/library/dd576348.aspx">MSBuild</a></strong> definition is pretty simple.</p>
+
+    <p>Let’s follow the <i>Project Configuration</i> step by step:</p>
+  </li>
+</ul>
+
+<ol>
+  <li>Project Root with <strong>‘Build’</strong> as default target.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;Project</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/developer/msbuild/2003"</span> <span class="na">DefaultTargets=</span><span class="s">"Build"</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;/Project&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>F# support.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;PropertyGroup&gt;</span>
+     <span class="nt">&lt;FSharpTargetsPath&gt;</span>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets<span class="nt">&lt;/FSharpTargetsPath&gt;</span>
+ <span class="nt">&lt;/PropertyGroup&gt;</span>
+ <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"$(FSharpTargetsPath)"</span> <span class="nt">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Program sources. Remember that order matters in F#.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;ItemGroup&gt;</span>
+     <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"Program.fs"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"Properties\AssemblyInfo.fs"</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Add a configuration file to store versions in <strong>../Configuration/Versions.xml</strong>.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;Project&gt;</span>
+     <span class="nt">&lt;PropertyGroup&gt;</span>
+         <span class="nt">&lt;XamarinFormsVersion&gt;</span>3.1.0.530888-pre2<span class="nt">&lt;/XamarinFormsVersion&gt;</span>
+         <span class="nt">&lt;AndroidSupportVersion&gt;</span>26.1.0.1<span class="nt">&lt;/AndroidSupportVersion&gt;</span>
+     <span class="nt">&lt;/PropertyGroup&gt;</span>
+ <span class="nt">&lt;/Project&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Import version numbers in the <strong>Android</strong> project.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"../Configuration/Versions.xml"</span> <span class="nt">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Add <strong>Xamarin</strong> dependencies.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;ItemGroup&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.Design"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v4"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.AppCompat"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.CardView"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.MediaRouter"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms"</span> <span class="na">Version=</span><span class="s">"$(XamarinFormsVersion)"</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>System &amp; Framework dependencies.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;ItemGroup&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Mono.Android"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Core"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.ObjectModel"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Xml.Linq"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Xml"</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Reference to common <strong>Xamarin.Forms</strong> project (The &lt;Project&gt; guid is optional).
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;ItemGroup&gt;</span>
+     <span class="nt">&lt;ProjectReference</span> <span class="na">Include=</span><span class="s">"..\HelloWorld\HelloWorld.fsproj"</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;Project&gt;</span>{F2A71F9B-5D33-465A-A702-920D77279786}<span class="nt">&lt;/Project&gt;</span>
+         <span class="nt">&lt;Name&gt;</span>HelloWorld<span class="nt">&lt;/Name&gt;</span>
+     <span class="nt">&lt;/ProjectReference&gt;</span>
+ <span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Import <strong>Android</strong> Targets.
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets"</span> <span class="nt">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Common project properties (debug or release).
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;PropertyGroup&gt;</span>
+    <span class="nt">&lt;Configuration</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)' == '' "</span><span class="nt">&gt;</span>Debug<span class="nt">&lt;/Configuration&gt;</span>
+    <span class="nt">&lt;Platform</span> <span class="na">Condition=</span><span class="s">" '$(Platform)' == '' "</span><span class="nt">&gt;</span>AnyCPU<span class="nt">&lt;/Platform&gt;</span>
+    <span class="nt">&lt;ProductVersion&gt;</span>8.0.30703<span class="nt">&lt;/ProductVersion&gt;</span>
+    <span class="nt">&lt;SchemaVersion&gt;</span>2.0<span class="nt">&lt;/SchemaVersion&gt;</span>
+    <span class="nt">&lt;ProjectGuid&gt;</span>{42F9F6D1-9DF3-42BC-84FC-1A593A2D4EC9}<span class="nt">&lt;/ProjectGuid&gt;</span>
+    <span class="nt">&lt;ProjectTypeGuids&gt;</span>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}<span class="nt">&lt;/ProjectTypeGuids&gt;</span>
+    <span class="nt">&lt;OutputType&gt;</span>Library<span class="nt">&lt;/OutputType&gt;</span>
+    <span class="nt">&lt;AppDesignerFolder&gt;</span>Properties<span class="nt">&lt;/AppDesignerFolder&gt;</span>
+    <span class="nt">&lt;RootNamespace&gt;</span>HelloWorld.Droid<span class="nt">&lt;/RootNamespace&gt;</span>
+    <span class="nt">&lt;AssemblyName&gt;</span>HelloWorld.Android<span class="nt">&lt;/AssemblyName&gt;</span>
+    <span class="nt">&lt;FileAlignment&gt;</span>512<span class="nt">&lt;/FileAlignment&gt;</span>
+    <span class="nt">&lt;AndroidApplication&gt;</span>true<span class="nt">&lt;/AndroidApplication&gt;</span>
+    <span class="nt">&lt;AndroidResgenFile&gt;</span>Resources\Resource.Designer.cs<span class="nt">&lt;/AndroidResgenFile&gt;</span>
+    <span class="nt">&lt;AndroidManifest&gt;</span>Properties\AndroidManifest.xml<span class="nt">&lt;/AndroidManifest&gt;</span>
+    <span class="nt">&lt;AndroidUseLatestPlatformSdk&gt;</span>true<span class="nt">&lt;/AndroidUseLatestPlatformSdk&gt;</span>
+    <span class="nt">&lt;TargetFrameworkVersion&gt;</span>v8.1<span class="nt">&lt;/TargetFrameworkVersion&gt;</span>
+    <span class="nt">&lt;JavaMaximumHeapSize</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;NuGetPackageImportStamp</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/PropertyGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Debug properties (I deliverately omit some configurations like Release …).
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;PropertyGroup</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;DebugSymbols&gt;</span>true<span class="nt">&lt;/DebugSymbols&gt;</span>
+    <span class="nt">&lt;DebugType&gt;</span>full<span class="nt">&lt;/DebugType&gt;</span>
+    <span class="nt">&lt;Optimize&gt;</span>false<span class="nt">&lt;/Optimize&gt;</span>
+    <span class="nt">&lt;OutputPath&gt;</span>bin\Debug\<span class="nt">&lt;/OutputPath&gt;</span>
+    <span class="nt">&lt;DefineConstants&gt;</span>DEBUG;TRACE<span class="nt">&lt;/DefineConstants&gt;</span>
+    <span class="nt">&lt;ErrorReport&gt;</span>prompt<span class="nt">&lt;/ErrorReport&gt;</span>
+    <span class="nt">&lt;WarningLevel&gt;</span>4<span class="nt">&lt;/WarningLevel&gt;</span>
+    <span class="nt">&lt;AndroidUseSharedRuntime&gt;</span>True<span class="nt">&lt;/AndroidUseSharedRuntime&gt;</span>
+    <span class="nt">&lt;AndroidLinkMode&gt;</span>None<span class="nt">&lt;/AndroidLinkMode&gt;</span>
+<span class="nt">&lt;/PropertyGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Android</strong> Resources (drawable icons, Manifest and styles).
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ItemGroup&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\drawable\icon.png"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\drawable-hdpi\icon.png"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\drawable-xhdpi\icon.png"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\drawable-xxhdpi\icon.png"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/ItemGroup&gt;</span>
+<span class="nt">&lt;ItemGroup&gt;</span>
+    <span class="nt">&lt;None</span> <span class="na">Include=</span><span class="s">"Properties\AndroidManifest.xml"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/ItemGroup&gt;</span>
+<span class="nt">&lt;ItemGroup&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\layout\Tabbar.axml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\layout\Toolbar.axml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\values\styles.xml"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/ItemGroup&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Complete Project definition (HelloWorld.Droid.fsproj).
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;Project</span> <span class="na">xmlns=</span><span class="s">"http://schemas.microsoft.com/developer/msbuild/2003"</span> <span class="na">DefaultTargets=</span><span class="s">"Build"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"../Configuration/Versions.xml"</span> <span class="nt">/&gt;</span>
+    <span class="c">&lt;!-- Common properties --&gt;</span>
+    <span class="nt">&lt;PropertyGroup&gt;</span>
+        <span class="nt">&lt;Configuration</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)' == '' "</span><span class="nt">&gt;</span>Debug<span class="nt">&lt;/Configuration&gt;</span>
+        <span class="nt">&lt;Platform</span> <span class="na">Condition=</span><span class="s">" '$(Platform)' == '' "</span><span class="nt">&gt;</span>AnyCPU<span class="nt">&lt;/Platform&gt;</span>
+        <span class="nt">&lt;ProductVersion&gt;</span>8.0.30703<span class="nt">&lt;/ProductVersion&gt;</span>
+        <span class="nt">&lt;SchemaVersion&gt;</span>2.0<span class="nt">&lt;/SchemaVersion&gt;</span>
+        <span class="nt">&lt;ProjectGuid&gt;</span>{42F9F6D1-9DF3-42BC-84FC-1A593A2D4EC9}<span class="nt">&lt;/ProjectGuid&gt;</span>
+        <span class="nt">&lt;ProjectTypeGuids&gt;</span>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}<span class="nt">&lt;/ProjectTypeGuids&gt;</span>
+        <span class="nt">&lt;OutputType&gt;</span>Library<span class="nt">&lt;/OutputType&gt;</span>
+        <span class="nt">&lt;AppDesignerFolder&gt;</span>Properties<span class="nt">&lt;/AppDesignerFolder&gt;</span>
+        <span class="nt">&lt;RootNamespace&gt;</span>HelloWorld.Droid<span class="nt">&lt;/RootNamespace&gt;</span>
+        <span class="nt">&lt;AssemblyName&gt;</span>HelloWorld.Droid<span class="nt">&lt;/AssemblyName&gt;</span>
+        <span class="nt">&lt;FileAlignment&gt;</span>512<span class="nt">&lt;/FileAlignment&gt;</span>
+        <span class="nt">&lt;AndroidApplication&gt;</span>true<span class="nt">&lt;/AndroidApplication&gt;</span>
+        <span class="nt">&lt;AndroidResgenFile&gt;</span>Resources\Resource.Designer.cs<span class="nt">&lt;/AndroidResgenFile&gt;</span>
+        <span class="nt">&lt;AndroidManifest&gt;</span>Properties\AndroidManifest.xml<span class="nt">&lt;/AndroidManifest&gt;</span>
+        <span class="nt">&lt;AndroidUseLatestPlatformSdk&gt;</span>true<span class="nt">&lt;/AndroidUseLatestPlatformSdk&gt;</span>
+        <span class="nt">&lt;TargetFrameworkVersion&gt;</span>v8.1<span class="nt">&lt;/TargetFrameworkVersion&gt;</span>
+        <span class="nt">&lt;JavaMaximumHeapSize</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;NuGetPackageImportStamp</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/PropertyGroup&gt;</span>
+    <span class="c">&lt;!-- DEBUG properties --&gt;</span>
+    <span class="nt">&lt;PropertyGroup</span> <span class="na">Condition=</span><span class="s">" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;DebugSymbols&gt;</span>true<span class="nt">&lt;/DebugSymbols&gt;</span>
+        <span class="nt">&lt;DebugType&gt;</span>full<span class="nt">&lt;/DebugType&gt;</span>
+        <span class="nt">&lt;Optimize&gt;</span>false<span class="nt">&lt;/Optimize&gt;</span>
+        <span class="nt">&lt;OutputPath&gt;</span>bin\Debug\<span class="nt">&lt;/OutputPath&gt;</span>
+        <span class="nt">&lt;DefineConstants&gt;</span>DEBUG;TRACE<span class="nt">&lt;/DefineConstants&gt;</span>
+        <span class="nt">&lt;ErrorReport&gt;</span>prompt<span class="nt">&lt;/ErrorReport&gt;</span>
+        <span class="nt">&lt;WarningLevel&gt;</span>4<span class="nt">&lt;/WarningLevel&gt;</span>
+        <span class="nt">&lt;AndroidUseSharedRuntime&gt;</span>True<span class="nt">&lt;/AndroidUseSharedRuntime&gt;</span>
+        <span class="nt">&lt;AndroidLinkMode&gt;</span>None<span class="nt">&lt;/AndroidLinkMode&gt;</span>
+    <span class="nt">&lt;/PropertyGroup&gt;</span>
+
+    <span class="c">&lt;!-- SOURCES --&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"MainActivity.fs"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Compile</span> <span class="na">Include=</span><span class="s">"Properties\AssemblyInfo.fs"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+
+    <span class="c">&lt;!-- RESOURCES --&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\drawable\icon.png"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;None</span> <span class="na">Include=</span><span class="s">"Properties\AndroidManifest.xml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\layout\Tabbar.axml"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\layout\Toolbar.axml"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;AndroidResource</span> <span class="na">Include=</span><span class="s">"Resources\values\styles.xml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+
+    <span class="c">&lt;!-- common xamarin forms project --&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;ProjectReference</span> <span class="na">Include=</span><span class="s">"..\HelloWorld\HelloWorld.fsproj"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Project&gt;</span>{F2A71F9B-5D33-465A-A702-920D77279786}<span class="nt">&lt;/Project&gt;</span>
+        <span class="nt">&lt;Name&gt;</span>HelloWorld<span class="nt">&lt;/Name&gt;</span>
+        <span class="nt">&lt;/ProjectReference&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+
+    <span class="c">&lt;!-- dependencies --&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.Design"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v4"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.AppCompat"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.CardView"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Android.Support.v7.MediaRouter"</span> <span class="na">Version=</span><span class="s">"$(AndroidSupportVersion)"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;PackageReference</span> <span class="na">Include=</span><span class="s">"Xamarin.Forms"</span> <span class="na">Version=</span><span class="s">"$(XamarinFormsVersion)"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+    <span class="nt">&lt;ItemGroup&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"Mono.Android"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Core"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Numerics"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.ObjectModel"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Xml.Linq"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;Reference</span> <span class="na">Include=</span><span class="s">"System.Xml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/ItemGroup&gt;</span>
+
+    <span class="c">&lt;!-- imports --&gt;</span>
+    <span class="nt">&lt;Import</span> <span class="na">Project=</span><span class="s">"$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.FSharp.targets"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Project&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h1 id="sources">Sources</h1>
+
+<p>You can check full source code <a href="https://github.com/jgoday/xamarinForms-FSharpTemplate">here</a>.</p>
+
+<ol>
+  <li>
+    <p><strong>Properties/AssemblyInfo.fs</strong></p>
+
+    <p>Contains attributes about the program and Android permissions.</p>
+
+    <p><a href="http://mike-ward.net/2012/05/26/learning-fndashassembly-level-attributes/">How to write an assembly info in fsharp</a>.</p>
+
+    <div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">namespace</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">Droid</span>
+
+ <span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Reflection</span>
+ <span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nn">Runtime</span><span class="p">.</span><span class="nc">CompilerServices</span>
+ <span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nn">Runtime</span><span class="p">.</span><span class="nc">InteropServices</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">App</span>
+
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyTitle</span><span class="p">(</span><span class="s2">"HelloWorld.Droid"</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyDescription</span><span class="p">(</span><span class="s2">""</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyConfiguration</span><span class="p">(</span><span class="s2">""</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyCompany</span><span class="p">(</span><span class="s2">""</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyProduct</span><span class="p">(</span><span class="s2">"HelloWorld.Droid"</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyCopyright</span><span class="p">(</span><span class="s2">"Copyright ©  2018"</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyTrademark</span><span class="p">(</span><span class="s2">""</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyCulture</span><span class="p">(</span><span class="s2">""</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">ComVisible</span><span class="p">(</span><span class="bp">false</span><span class="o">)&gt;]</span>
+
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyVersion</span><span class="p">(</span><span class="s2">"1.0.0.0"</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">AssemblyFileVersion</span><span class="p">(</span><span class="s2">"1.0.0.0"</span><span class="o">)&gt;]</span>
+
+ <span class="c1">// Android permissions</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">UsesPermission</span><span class="p">(</span><span class="nn">Android</span><span class="p">.</span><span class="nn">Manifest</span><span class="p">.</span><span class="nn">Permission</span><span class="p">.</span><span class="nc">Internet</span><span class="o">)&gt;]</span>
+ <span class="p">[&lt;</span><span class="n">assembly</span><span class="p">:</span> <span class="nc">UsesPermission</span><span class="p">(</span><span class="nn">Android</span><span class="p">.</span><span class="nn">Manifest</span><span class="p">.</span><span class="nn">Permission</span><span class="p">.</span><span class="nc">WriteExternalStorage</span><span class="o">)&gt;]</span>
+ <span class="k">do</span> <span class="bp">()</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>MainActivity.fs</strong>
+    <div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">namespace</span> <span class="nn">HelloWorld</span><span class="p">.</span><span class="nc">Droid</span>
+
+ <span class="k">open</span> <span class="nc">System</span>
+ <span class="k">open</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Diagnostics</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">App</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nn">Content</span><span class="p">.</span><span class="nc">PM</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">Runtime</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">Views</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">Widget</span>
+ <span class="k">open</span> <span class="nn">Android</span><span class="p">.</span><span class="nc">OS</span>
+
+ <span class="k">open</span> <span class="nc">HelloWorld</span>
+
+ <span class="p">[&lt;</span><span class="nc">Activity</span><span class="p">(</span><span class="nc">Label</span> <span class="p">=</span> <span class="s2">"HelloWorld"</span><span class="p">,</span> <span class="nc">Icon</span> <span class="p">=</span> <span class="s2">"@drawable/icon"</span><span class="p">,</span> <span class="nc">Theme</span> <span class="p">=</span> <span class="s2">"@style/MainTheme"</span><span class="p">,</span> <span class="nc">MainLauncher</span> <span class="p">=</span> <span class="bp">true</span><span class="o">)&gt;]</span>
+ <span class="k">type</span> <span class="nc">MainActivity</span><span class="bp">()</span> <span class="p">=</span>
+     <span class="k">inherit</span> <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nn">Platform</span><span class="p">.</span><span class="nn">Android</span><span class="p">.</span><span class="nc">FormsAppCompatActivity</span><span class="bp">()</span>
+
+     <span class="k">override</span> <span class="n">x</span><span class="p">.</span><span class="nc">OnCreate</span> <span class="p">(</span><span class="n">bundle</span><span class="p">:</span> <span class="nc">Bundle</span><span class="p">)</span> <span class="p">=</span>
+         <span class="k">base</span><span class="p">.</span><span class="nc">OnCreate</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+         <span class="nn">Xamarin</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nn">Forms</span><span class="p">.</span><span class="nc">Init</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bundle</span><span class="p">)</span>
+         <span class="k">let</span> <span class="n">app</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">App</span><span class="bp">()</span>
+         <span class="n">x</span><span class="p">.</span><span class="nc">LoadApplication</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Properties/AndroidManifest.xml</strong>
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+ <span class="nt">&lt;manifest</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;uses-sdk</span> <span class="na">android:minSdkVersion=</span><span class="s">"15"</span> <span class="nt">/&gt;</span>
+     <span class="nt">&lt;application</span> <span class="na">android:label=</span><span class="s">"HelloWorld.Droid"</span><span class="nt">&gt;&lt;/application&gt;</span>
+ <span class="nt">&lt;/manifest&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Resources/values/styles.xml</strong>
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+ <span class="nt">&lt;resources&gt;</span>
+
+ <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"MainTheme"</span> <span class="na">parent=</span><span class="s">"MainTheme.Base"</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;/style&gt;</span>
+ <span class="c">&lt;!-- Base theme applied no matter what API --&gt;</span>
+ <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"MainTheme.Base"</span> <span class="na">parent=</span><span class="s">"Theme.AppCompat.Light.DarkActionBar"</span><span class="nt">&gt;</span>
+     <span class="c">&lt;!--If you are using revision 22.1 please use just windowNoTitle. Without android:--&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"windowNoTitle"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/item&gt;</span>
+     <span class="c">&lt;!--We will be using the toolbar so no need to show ActionBar--&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"windowActionBar"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/item&gt;</span>
+     <span class="c">&lt;!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette --&gt;</span>
+     <span class="c">&lt;!-- colorPrimary is used for the default action bar background --&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorPrimary"</span><span class="nt">&gt;</span>#2196F3<span class="nt">&lt;/item&gt;</span>
+     <span class="c">&lt;!-- colorPrimaryDark is used for the status bar --&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorPrimaryDark"</span><span class="nt">&gt;</span>#1976D2<span class="nt">&lt;/item&gt;</span>
+     <span class="c">&lt;!-- colorAccent is used as the default value for colorControlActivated
+         which is used to tint widgets --&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorAccent"</span><span class="nt">&gt;</span>#FF4081<span class="nt">&lt;/item&gt;</span>
+     <span class="c">&lt;!-- You can also set colorControlNormal, colorControlActivated
+         colorControlHighlight and colorSwitchThumbNormal. --&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"windowActionModeOverlay"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/item&gt;</span>
+
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"android:datePickerDialogTheme"</span><span class="nt">&gt;</span>@style/AppCompatDialogStyle<span class="nt">&lt;/item&gt;</span>
+ <span class="nt">&lt;/style&gt;</span>
+
+ <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"AppCompatDialogStyle"</span> <span class="na">parent=</span><span class="s">"Theme.AppCompat.Light.Dialog"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorAccent"</span><span class="nt">&gt;</span>#FF4081<span class="nt">&lt;/item&gt;</span>
+ <span class="nt">&lt;/style&gt;</span>
+ <span class="nt">&lt;/resources&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h1 id="compile-and-test">Compile and test</h1>
+<ol>
+  <li>Restore project dependencies.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nuget restore HelloWorld.Droid.fsproj
+</code></pre></div>    </div>
+  </li>
+  <li>Build it.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msbuild /t:Build
+</code></pre></div>    </div>
+  </li>
+  <li>Build <strong>Android APK file</strong>.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msbuild /t:BuildApk
+</code></pre></div>    </div>
+  </li>
+  <li>Sign <strong>Android APK</strong>.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>msbuild /t:SignAndroidPackage
+</code></pre></div>    </div>
+  </li>
+  <li>Install it on a device or emulator.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb install <span class="nt">-r</span> bin/Debug/HelloWorld.Droid-Signed.apk
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://jgoday-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div></section>
+        <aside class="right-sidebar"></aside>
+
+        <footer>
+            <div class="brands pull-right md padding">
+                <a href="https://www.linkedin.com/in/javier-goday-3a1b417b/"><img src="/assets/In-Black-48px-TM.png" /></a>
+                <a href="https://github.com/jgoday"><img src="/assets/GitHub-Mark-64px.png" /></a>
+            </div>
+        </footer>
+
+        <script async src="/assets/gdpr.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119691458-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119691458-1');
+        </script>
+
+    </body>
+</html>

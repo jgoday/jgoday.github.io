@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>Xamarin Forms with F#: Part 3 (Android)</title>
+
+        <link href='https://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css' />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css' />
+        <link rel="alternate" type="application/rss+xml" title="jgoday.github.io" href="/feed.xml" />
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+        <link href="/css/main.css" rel="stylesheet" />
+    </head>
+    <body>
+        <header>
+            <h1>jgoday.github.io</h1>
+
+            <section class="links">
+                <a href="/feed.xml">
+                   <img src="/assets/rss.png" />
+                </a>
+            </section>
+            <section class="subheader">
+                <a href='/'>Home</a>
+                <a href='/categories'>Categories</a>
+                <a href='/about'>About</a>
+            </section>
+        </header>
+
+        <aside class="left-sidebar"></aside>
+        <section class="content"><h2 class="post-title">Xamarin Forms with F#: Part 3 (Android)</h2>
+
+<div class="post-content">
+<div class="post-categories">
+    
+    
+    <a href="/categories/#xamarin.forms">xamarin.forms</a>
+    &nbsp;
+    
+    <a href="/categories/#f#">f#</a>
+    
+    
+  </div>
+
+<p class="meta">22 May 2018</p>
+
+
+<div class="post">
+<ul>
+  <li>
+    <p>https://github.com/0xFireball/xamarin-android-linux</p>
+  </li>
+  <li>
+    <p>Download prebuilt releases</p>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/
+</code></pre></div>    </div>
+    <p>In my case, Ubuntu 18.04 -&gt; https://jenkins.mono-project.com/view/Xamarin.Android/job/xamarin-android-linux/lastSuccessfulBuild/Azure/processDownloadRequest/xamarin-android/xamarin.android-oss_8.3.99.189_amd64.deb</p>
+  </li>
+</ul>
+
+<p>sudo dpkg -i xamarin.android-oss_8.3.99.189_amd64.deb</p>
+
+<p>/usr/lib/xamarin.android/</p>
+
+<ul>
+  <li>Configure android sdk
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export ANDROID_SDK_PATH=$HOME/Android/Sdk
+export ANDROID_NDK_PATH=$HOME/Android/Sdk/ndk-bundle
+</code></pre></div>    </div>
+  </li>
+  <li>Test
+/path/to/xamarin.android-oss*/bin/Debug/bin/xabuild /path/to/samples/HelloWorld/HelloWorld.csproj</li>
+</ul>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://jgoday-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div></section>
+        <aside class="right-sidebar"></aside>
+
+        <footer>
+            <div class="brands pull-right md padding">
+                <a href="https://www.linkedin.com/in/javier-goday-3a1b417b/"><img src="/assets/In-Black-48px-TM.png" /></a>
+                <a href="https://github.com/jgoday"><img src="/assets/GitHub-Mark-64px.png" /></a>
+            </div>
+        </footer>
+
+        <script async src="/assets/gdpr.js"></script>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119691458-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119691458-1');
+        </script>
+
+    </body>
+</html>
